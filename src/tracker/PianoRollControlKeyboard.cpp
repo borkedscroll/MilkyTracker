@@ -1,5 +1,5 @@
 /*
- *  tracker/PatternEditorControlKeyboard.cpp
+ *  tracker/PianoRollControlKeyboard.cpp
  *
  *  Copyright 2009 Peter Barth
  *
@@ -21,188 +21,188 @@
  */
 
 /*
- *  PatternEditorControlKeyboard.cpp
+ *  PianoRollControlKeyboard.cpp
  *  MilkyTracker
  *
  *  Created by Peter Barth on Fri Mar 11 2005.
  *
  */
 
-#include "PatternEditorControl.h"
+#include "PianoRollControl.h"
 #include "PatternTools.h"
 #include "KeyBindings.h"
 
-void PatternEditorControl::initKeyBindings()
+void PianoRollControl::initKeyBindings()
 {
-	eventKeyDownBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
+	eventKeyDownBindingsMilkyTracker = new PPKeyBindings<TPianoRollKeyBindingHandler>;
 
 	// Key-down bindings MilkyTracker
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, 0, &PatternEditorControl::eventKeyDownBinding_LEFT);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, 0, &PatternEditorControl::eventKeyDownBinding_RIGHT);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_UP, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_UP);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_DOWN, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_DOWN);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_PRIOR, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_PRIOR);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_NEXT, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_NEXT);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_HOME, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_HOME);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_END, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_END);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, 0, &PatternEditorControl::eventKeyDownBinding_NextChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_NextChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT|KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_NextChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_LEFT);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_RIGHT);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, 0, &PianoRollControl::eventKeyDownBinding_LEFT);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, 0, &PianoRollControl::eventKeyDownBinding_RIGHT);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_UP, 0xFFFF, &PianoRollControl::eventKeyDownBinding_UP);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_DOWN, 0xFFFF, &PianoRollControl::eventKeyDownBinding_DOWN);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_PRIOR, 0xFFFF, &PianoRollControl::eventKeyDownBinding_PRIOR);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_NEXT, 0xFFFF, &PianoRollControl::eventKeyDownBinding_NEXT);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_HOME, 0xFFFF, &PianoRollControl::eventKeyDownBinding_HOME);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_END, 0xFFFF, &PianoRollControl::eventKeyDownBinding_END);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, 0, &PianoRollControl::eventKeyDownBinding_NextChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_NextChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_PreviousChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_PreviousChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_TAB, KeyModifierSHIFT|KeyModifierALT, &PianoRollControl::eventKeyDownBinding_PreviousChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_PreviousChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_NextChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_LEFT, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_LEFT);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_RIGHT, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_RIGHT);
 
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_DeleteVolumeAndEffect);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_DeleteEffect);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_DeleteVolumeAndEffect);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_DELETE, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_DeleteEffect);
 
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_INSERT, 0, &PatternEditorControl::eventKeyDownBinding_InsertNote);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_INSERT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_InsertLine);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_InsertNote);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierALT | KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_InsertLine);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, 0, &PatternEditorControl::eventKeyDownBinding_DeleteNoteSlot);
-	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_DeleteLine);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_INSERT, 0, &PianoRollControl::eventKeyDownBinding_InsertNote);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_INSERT, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_InsertLine);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_InsertNote);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierALT | KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_InsertLine);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, 0, &PianoRollControl::eventKeyDownBinding_DeleteNoteSlot);
+	eventKeyDownBindingsMilkyTracker->addBinding(VK_BACK, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_DeleteLine);
 
-	eventKeyDownBindingsMilkyTracker->addBinding('Z', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Undo);
-	eventKeyDownBindingsMilkyTracker->addBinding('Y', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Redo);
-	eventKeyDownBindingsMilkyTracker->addBinding('X', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Cut);
-	eventKeyDownBindingsMilkyTracker->addBinding('C', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Copy);
-	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_TransparentPaste);
-	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Paste);
-	eventKeyDownBindingsMilkyTracker->addBinding('A', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_SelectAll);
-	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
-	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_InvertMuting);
-	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_Interpolate);
+	eventKeyDownBindingsMilkyTracker->addBinding('Z', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_Undo);
+	eventKeyDownBindingsMilkyTracker->addBinding('Y', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_Redo);
+	eventKeyDownBindingsMilkyTracker->addBinding('X', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_Cut);
+	eventKeyDownBindingsMilkyTracker->addBinding('C', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_Copy);
+	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierSHIFT|KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_TransparentPaste);
+	eventKeyDownBindingsMilkyTracker->addBinding('V', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_Paste);
+	eventKeyDownBindingsMilkyTracker->addBinding('A', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_SelectAll);
+	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT, &PianoRollControl::eventKeyCharBinding_MuteChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_MuteChannel);
+	eventKeyDownBindingsMilkyTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_InvertMuting);
+	eventKeyDownBindingsMilkyTracker->addBinding('I', KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_Interpolate);
 
 	// Scancode bindings
-	scanCodeBindingsMilkyTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
+	scanCodeBindingsMilkyTracker = new PPKeyBindings<TPianoRollKeyBindingHandler>;
 
 	// Alternate binding for eventKeyDownBinding_SC_IncreaseRowInsertAdd
 	// for modern ANSI keyboards without section symbol key
-	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
-	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 
-	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
-	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
-	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
-	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_InsDecSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_InsIncSelection);
+	scanCodeBindingsMilkyTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_InsDecTrack);
+	scanCodeBindingsMilkyTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_InsIncTrack);
 
 	// Key-down bindings Fasttracker
-	eventKeyDownBindingsFastTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
+	eventKeyDownBindingsFastTracker = new PPKeyBindings<TPianoRollKeyBindingHandler>;
 
-	eventKeyDownBindingsFastTracker->addBinding(VK_LEFT, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_LEFT);
-	eventKeyDownBindingsFastTracker->addBinding(VK_RIGHT, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_RIGHT);
-	eventKeyDownBindingsFastTracker->addBinding(VK_UP, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_UP);
-	eventKeyDownBindingsFastTracker->addBinding(VK_DOWN, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_DOWN);
-	eventKeyDownBindingsFastTracker->addBinding(VK_PRIOR, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_PRIOR);
-	eventKeyDownBindingsFastTracker->addBinding(VK_NEXT, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_NEXT);
-	eventKeyDownBindingsFastTracker->addBinding(VK_HOME, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_HOME);
-	eventKeyDownBindingsFastTracker->addBinding(VK_END, 0xFFFF, &PatternEditorControl::eventKeyDownBinding_END);
-	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, 0, &PatternEditorControl::eventKeyDownBinding_NextChannel);
-	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
-	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_NextChannel);
-	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, KeyModifierSHIFT|KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_PreviousChannel);
+	eventKeyDownBindingsFastTracker->addBinding(VK_LEFT, 0xFFFF, &PianoRollControl::eventKeyDownBinding_LEFT);
+	eventKeyDownBindingsFastTracker->addBinding(VK_RIGHT, 0xFFFF, &PianoRollControl::eventKeyDownBinding_RIGHT);
+	eventKeyDownBindingsFastTracker->addBinding(VK_UP, 0xFFFF, &PianoRollControl::eventKeyDownBinding_UP);
+	eventKeyDownBindingsFastTracker->addBinding(VK_DOWN, 0xFFFF, &PianoRollControl::eventKeyDownBinding_DOWN);
+	eventKeyDownBindingsFastTracker->addBinding(VK_PRIOR, 0xFFFF, &PianoRollControl::eventKeyDownBinding_PRIOR);
+	eventKeyDownBindingsFastTracker->addBinding(VK_NEXT, 0xFFFF, &PianoRollControl::eventKeyDownBinding_NEXT);
+	eventKeyDownBindingsFastTracker->addBinding(VK_HOME, 0xFFFF, &PianoRollControl::eventKeyDownBinding_HOME);
+	eventKeyDownBindingsFastTracker->addBinding(VK_END, 0xFFFF, &PianoRollControl::eventKeyDownBinding_END);
+	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, 0, &PianoRollControl::eventKeyDownBinding_NextChannel);
+	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_PreviousChannel);
+	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_NextChannel);
+	eventKeyDownBindingsFastTracker->addBinding(VK_TAB, KeyModifierSHIFT|KeyModifierALT, &PianoRollControl::eventKeyDownBinding_PreviousChannel);
 
-	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, 0, &PatternEditorControl::eventKeyDownBinding_DeleteNote);
-	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect);
-	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_DeleteVolumeAndEffect);
-	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_DeleteEffect);
+	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, 0, &PianoRollControl::eventKeyDownBinding_DeleteNote);
+	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect);
+	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_DeleteVolumeAndEffect);
+	eventKeyDownBindingsFastTracker->addBinding(VK_DELETE, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_DeleteEffect);
 
-	eventKeyDownBindingsFastTracker->addBinding(VK_INSERT, 0, &PatternEditorControl::eventKeyDownBinding_InsertNote);
-	eventKeyDownBindingsFastTracker->addBinding(VK_INSERT, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_InsertLine);
-	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_InsertNote);
-	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, KeyModifierALT | KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_InsertLine);
-	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, 0, &PatternEditorControl::eventKeyDownBinding_DeleteNoteSlot);
-	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_DeleteLine);
+	eventKeyDownBindingsFastTracker->addBinding(VK_INSERT, 0, &PianoRollControl::eventKeyDownBinding_InsertNote);
+	eventKeyDownBindingsFastTracker->addBinding(VK_INSERT, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_InsertLine);
+	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_InsertNote);
+	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, KeyModifierALT | KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_InsertLine);
+	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, 0, &PianoRollControl::eventKeyDownBinding_DeleteNoteSlot);
+	eventKeyDownBindingsFastTracker->addBinding(VK_BACK, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_DeleteLine);
 
-	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_CutTrack);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F4, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_CopyTrack);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F5, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_PasteTrack);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_TransparentPasteTrack);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_CutTrack);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F4, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_CopyTrack);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F5, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_PasteTrack);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_TransparentPasteTrack);
 
-	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_CutPattern);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F4, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_CopyPattern);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F5, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_PastePattern);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_TransparentPastePattern);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_CutPattern);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F4, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_CopyPattern);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F5, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_PastePattern);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_TransparentPastePattern);
 
-	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Cut);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F4, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Copy);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F5, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Paste);
-	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_TransparentPaste);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F3, KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Cut);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F4, KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Copy);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F5, KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Paste);
+	eventKeyDownBindingsFastTracker->addBinding(VK_F6, KeyModifierALT, &PianoRollControl::eventKeyCharBinding_TransparentPaste);
 
 	// Typical:
 	// Remember to check keyboard shortcuts which are always possible in file TrackerShortCuts.cpp
 	// (= keyboard handler) otherwise they might not be routed here
-	eventKeyDownBindingsFastTracker->addBinding('Z', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Undo);
-	eventKeyDownBindingsFastTracker->addBinding('Y', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Redo);
-	eventKeyDownBindingsFastTracker->addBinding('X', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Cut);
-	eventKeyDownBindingsFastTracker->addBinding('C', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Copy);
-	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_Paste);
-	eventKeyDownBindingsFastTracker->addBinding('A', KeyModifierCTRL|KeyModifierALT, &PatternEditorControl::eventKeyCharBinding_SelectAll);
+	eventKeyDownBindingsFastTracker->addBinding('Z', KeyModifierCTRL|KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Undo);
+	eventKeyDownBindingsFastTracker->addBinding('Y', KeyModifierCTRL|KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Redo);
+	eventKeyDownBindingsFastTracker->addBinding('X', KeyModifierCTRL|KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Cut);
+	eventKeyDownBindingsFastTracker->addBinding('C', KeyModifierCTRL|KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Copy);
+	eventKeyDownBindingsFastTracker->addBinding('V', KeyModifierCTRL|KeyModifierALT, &PianoRollControl::eventKeyCharBinding_Paste);
+	eventKeyDownBindingsFastTracker->addBinding('A', KeyModifierCTRL|KeyModifierALT, &PianoRollControl::eventKeyCharBinding_SelectAll);
 
-	eventKeyDownBindingsFastTracker->addBinding('M', KeyModifierSHIFT, &PatternEditorControl::eventKeyCharBinding_MuteChannel);
-	eventKeyDownBindingsFastTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyCharBinding_InvertMuting);
-	eventKeyDownBindingsFastTracker->addBinding('I', KeyModifierSHIFT, &PatternEditorControl::eventKeyCharBinding_Interpolate);
+	eventKeyDownBindingsFastTracker->addBinding('M', KeyModifierSHIFT, &PianoRollControl::eventKeyCharBinding_MuteChannel);
+	eventKeyDownBindingsFastTracker->addBinding('M', KeyModifierSHIFT|KeyModifierCTRL, &PianoRollControl::eventKeyCharBinding_InvertMuting);
+	eventKeyDownBindingsFastTracker->addBinding('I', KeyModifierSHIFT, &PianoRollControl::eventKeyCharBinding_Interpolate);
 
-	scanCodeBindingsFastTracker = new PPKeyBindings<TPatternEditorKeyBindingHandler>;
+	scanCodeBindingsFastTracker = new PPKeyBindings<TPianoRollKeyBindingHandler>;
 
 	// Scancode bindings
-	scanCodeBindingsFastTracker->addBinding(SC_1, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro1);
-	scanCodeBindingsFastTracker->addBinding(SC_2, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro2);
-	scanCodeBindingsFastTracker->addBinding(SC_3, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro3);
-	scanCodeBindingsFastTracker->addBinding(SC_4, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro4);
-	scanCodeBindingsFastTracker->addBinding(SC_5, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro5);
-	scanCodeBindingsFastTracker->addBinding(SC_6, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro6);
-	scanCodeBindingsFastTracker->addBinding(SC_7, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro7);
-	scanCodeBindingsFastTracker->addBinding(SC_8, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro8);
-	scanCodeBindingsFastTracker->addBinding(SC_9, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro9);
-	scanCodeBindingsFastTracker->addBinding(SC_0, KeyModifierALT|KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_ReadMacro0);
+	scanCodeBindingsFastTracker->addBinding(SC_1, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro1);
+	scanCodeBindingsFastTracker->addBinding(SC_2, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro2);
+	scanCodeBindingsFastTracker->addBinding(SC_3, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro3);
+	scanCodeBindingsFastTracker->addBinding(SC_4, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro4);
+	scanCodeBindingsFastTracker->addBinding(SC_5, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro5);
+	scanCodeBindingsFastTracker->addBinding(SC_6, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro6);
+	scanCodeBindingsFastTracker->addBinding(SC_7, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro7);
+	scanCodeBindingsFastTracker->addBinding(SC_8, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro8);
+	scanCodeBindingsFastTracker->addBinding(SC_9, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro9);
+	scanCodeBindingsFastTracker->addBinding(SC_0, KeyModifierALT|KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_ReadMacro0);
 
-	scanCodeBindingsFastTracker->addBinding(SC_1, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro1);
-	scanCodeBindingsFastTracker->addBinding(SC_2, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro2);
-	scanCodeBindingsFastTracker->addBinding(SC_3, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro3);
-	scanCodeBindingsFastTracker->addBinding(SC_4, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro4);
-	scanCodeBindingsFastTracker->addBinding(SC_5, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro5);
-	scanCodeBindingsFastTracker->addBinding(SC_6, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro6);
-	scanCodeBindingsFastTracker->addBinding(SC_7, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro7);
-	scanCodeBindingsFastTracker->addBinding(SC_8, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro8);
-	scanCodeBindingsFastTracker->addBinding(SC_9, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro9);
-	scanCodeBindingsFastTracker->addBinding(SC_0, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_WriteMacro0);
+	scanCodeBindingsFastTracker->addBinding(SC_1, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro1);
+	scanCodeBindingsFastTracker->addBinding(SC_2, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro2);
+	scanCodeBindingsFastTracker->addBinding(SC_3, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro3);
+	scanCodeBindingsFastTracker->addBinding(SC_4, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro4);
+	scanCodeBindingsFastTracker->addBinding(SC_5, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro5);
+	scanCodeBindingsFastTracker->addBinding(SC_6, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro6);
+	scanCodeBindingsFastTracker->addBinding(SC_7, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro7);
+	scanCodeBindingsFastTracker->addBinding(SC_8, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro8);
+	scanCodeBindingsFastTracker->addBinding(SC_9, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro9);
+	scanCodeBindingsFastTracker->addBinding(SC_0, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_WriteMacro0);
 
-	scanCodeBindingsFastTracker->addBinding(SC_Q, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_Q);
-	scanCodeBindingsFastTracker->addBinding(SC_W, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_W);
-	scanCodeBindingsFastTracker->addBinding(SC_E, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_E);
-	scanCodeBindingsFastTracker->addBinding(SC_R, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_R);
-	scanCodeBindingsFastTracker->addBinding(SC_T, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_T);
-	scanCodeBindingsFastTracker->addBinding(SC_Z, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_Z);
-	scanCodeBindingsFastTracker->addBinding(SC_U, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_U);
-	scanCodeBindingsFastTracker->addBinding(SC_I, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_I);
+	scanCodeBindingsFastTracker->addBinding(SC_Q, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_Q);
+	scanCodeBindingsFastTracker->addBinding(SC_W, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_W);
+	scanCodeBindingsFastTracker->addBinding(SC_E, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_E);
+	scanCodeBindingsFastTracker->addBinding(SC_R, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_R);
+	scanCodeBindingsFastTracker->addBinding(SC_T, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_T);
+	scanCodeBindingsFastTracker->addBinding(SC_Z, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_Z);
+	scanCodeBindingsFastTracker->addBinding(SC_U, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_U);
+	scanCodeBindingsFastTracker->addBinding(SC_I, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_I);
 
-	scanCodeBindingsFastTracker->addBinding(SC_A, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_A);
-	scanCodeBindingsFastTracker->addBinding(SC_S, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_S);
-	scanCodeBindingsFastTracker->addBinding(SC_D, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_D);
-	scanCodeBindingsFastTracker->addBinding(SC_F, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_F);
-	scanCodeBindingsFastTracker->addBinding(SC_G, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_G);
-	scanCodeBindingsFastTracker->addBinding(SC_H, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_H);
-	scanCodeBindingsFastTracker->addBinding(SC_J, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_J);
-	scanCodeBindingsFastTracker->addBinding(SC_K, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_K);
+	scanCodeBindingsFastTracker->addBinding(SC_A, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_A);
+	scanCodeBindingsFastTracker->addBinding(SC_S, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_S);
+	scanCodeBindingsFastTracker->addBinding(SC_D, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_D);
+	scanCodeBindingsFastTracker->addBinding(SC_F, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_F);
+	scanCodeBindingsFastTracker->addBinding(SC_G, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_G);
+	scanCodeBindingsFastTracker->addBinding(SC_H, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_H);
+	scanCodeBindingsFastTracker->addBinding(SC_J, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_J);
+	scanCodeBindingsFastTracker->addBinding(SC_K, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_K);
 
-	scanCodeBindingsFastTracker->addBinding(SC_WTF, 0, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
-	scanCodeBindingsFastTracker->addBinding(SC_WTF, KeyModifierSHIFT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+	scanCodeBindingsFastTracker->addBinding(SC_WTF, 0, &PianoRollControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
+	scanCodeBindingsFastTracker->addBinding(SC_WTF, KeyModifierSHIFT, &PianoRollControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
 
 	// Alternate binding for eventKeyDownBinding_SC_IncreaseRowInsertAdd
 	// for modern ANSI keyboards without section symbol key
-	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
-	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierALT, &PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierALT, &PianoRollControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd);
 
-	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecSelection);
-	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncSelection);
-	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsDecTrack);
-	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PatternEditorControl::eventKeyDownBinding_InsIncTrack);
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_InsDecSelection);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_InsIncSelection);
+	scanCodeBindingsFastTracker->addBinding(SC_SS, KeyModifierSHIFT|KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_InsDecTrack);
+	scanCodeBindingsFastTracker->addBinding(SC_TICK, KeyModifierSHIFT|KeyModifierCTRL, &PianoRollControl::eventKeyDownBinding_InsIncTrack);
 
 	eventKeyDownBindings = eventKeyDownBindingsMilkyTracker;
 }
@@ -394,7 +394,7 @@ static pp_int32 asciiToHexExtended(pp_uint8 ascii)
 	return number;
 }
 
-pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
+pp_int32 PianoRollControl::ScanCodeToNote(pp_int16 scanCode)
 {
 	switch (scanCode)
 	{
@@ -561,7 +561,7 @@ pp_int32 PatternEditorControl::ScanCodeToNote(pp_int16 scanCode)
 	return -1;
 }
 
-void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
+void PianoRollControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
 {
 	if (result == -1 &&  ::getKeyModifier() == 0)
 	{
@@ -582,7 +582,7 @@ void PatternEditorControl::handleDeleteKey(pp_uint16 keyCode, pp_int32& result)
 }
 
 // "C-","C#","D-","D#","E-","F-","F#","G-","G#","A-","A#","B-"
-void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character)
+void PianoRollControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, pp_uint16 character)
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	pp_int32 number = -1;
@@ -684,7 +684,7 @@ void PatternEditorControl::handleKeyDown(pp_uint16 keyCode, pp_uint16 scanCode, 
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::handleKeyChar(pp_uint8 character)
+void PianoRollControl::handleKeyChar(pp_uint8 character)
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 	pp_int32 number = -1;
@@ -808,7 +808,7 @@ void PatternEditorControl::handleKeyChar(pp_uint8 character)
 		}
 	}
 
-	// If the input had an effect, ensure the PatternEditorControl is repainted
+	// If the input had an effect, ensure the PianoRollControl is repainted
 	if (number != -1)
 		assureUpdate = true;
 
@@ -816,12 +816,12 @@ cleanUp:
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-bool PatternEditorControl::executeBinding(const PPKeyBindings<TPatternEditorKeyBindingHandler>* bindings, pp_uint16 keyCode)
+bool PianoRollControl::executeBinding(const PPKeyBindings<TPianoRollKeyBindingHandler>* bindings, pp_uint16 keyCode)
 {
 	if (bindings == NULL)
 		return false;
 
-	TPatternEditorKeyBindingHandler handlerFunc;
+	TPianoRollKeyBindingHandler handlerFunc;
 	bool res = bindings->getBinding(keyCode, ::getKeyModifier(), handlerFunc);
 
 	if (res)
@@ -835,7 +835,7 @@ bool PatternEditorControl::executeBinding(const PPKeyBindings<TPatternEditorKeyB
 //////////////////////////////////////////////////////
 // key-down bindings								//
 //////////////////////////////////////////////////////
-void PatternEditorControl::eventKeyDownBinding_LEFT()
+void PianoRollControl::eventKeyDownBinding_LEFT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -864,7 +864,7 @@ void PatternEditorControl::eventKeyDownBinding_LEFT()
 	}
 }
 
-void PatternEditorControl::eventKeyDownBinding_RIGHT()
+void PianoRollControl::eventKeyDownBinding_RIGHT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -893,7 +893,7 @@ void PatternEditorControl::eventKeyDownBinding_RIGHT()
 	}
 }
 
-void PatternEditorControl::eventKeyDownBinding_UP()
+void PianoRollControl::eventKeyDownBinding_UP()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -922,7 +922,7 @@ void PatternEditorControl::eventKeyDownBinding_UP()
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_DOWN()
+void PianoRollControl::eventKeyDownBinding_DOWN()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -950,7 +950,7 @@ void PatternEditorControl::eventKeyDownBinding_DOWN()
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_PRIOR()
+void PianoRollControl::eventKeyDownBinding_PRIOR()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -978,7 +978,7 @@ void PatternEditorControl::eventKeyDownBinding_PRIOR()
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_NEXT()
+void PianoRollControl::eventKeyDownBinding_NEXT()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1005,31 +1005,31 @@ void PatternEditorControl::eventKeyDownBinding_NEXT()
 		notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_HOME()
+void PianoRollControl::eventKeyDownBinding_HOME()
 {
 	patternEditor->getCursor().row = 0;
 	notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_END()
+void PianoRollControl::eventKeyDownBinding_END()
 {
 	patternEditor->getCursor().row = pattern->rows-1;
 	notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_FIRSTQUARTER()
+void PianoRollControl::eventKeyDownBinding_FIRSTQUARTER()
 {
 	patternEditor->getCursor().row = (pattern->rows >> 2);
 	notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_SECONDQUARTER()
+void PianoRollControl::eventKeyDownBinding_SECONDQUARTER()
 {
 	patternEditor->getCursor().row = (pattern->rows >> 2)*2;
 	notifyUpdate(AdvanceCodeSelectNewRow);
 }
 
-void PatternEditorControl::eventKeyDownBinding_THIRDQUARTER()
+void PianoRollControl::eventKeyDownBinding_THIRDQUARTER()
 {
 	patternEditor->getCursor().row = (pattern->rows >> 2)*3;
 	notifyUpdate(AdvanceCodeSelectNewRow);
@@ -1038,57 +1038,57 @@ void PatternEditorControl::eventKeyDownBinding_THIRDQUARTER()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //											Damn FT2 shortcuts
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-void PatternEditorControl::eventKeyDownBinding_ReadMacro1()
+void PianoRollControl::eventKeyDownBinding_ReadMacro1()
 {
 	patternEditor->storeMacroFromCursor(1);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro2()
+void PianoRollControl::eventKeyDownBinding_ReadMacro2()
 {
 	patternEditor->storeMacroFromCursor(2);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro3()
+void PianoRollControl::eventKeyDownBinding_ReadMacro3()
 {
 	patternEditor->storeMacroFromCursor(3);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro4()
+void PianoRollControl::eventKeyDownBinding_ReadMacro4()
 {
 	patternEditor->storeMacroFromCursor(4);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro5()
+void PianoRollControl::eventKeyDownBinding_ReadMacro5()
 {
 	patternEditor->storeMacroFromCursor(5);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro6()
+void PianoRollControl::eventKeyDownBinding_ReadMacro6()
 {
 	patternEditor->storeMacroFromCursor(6);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro7()
+void PianoRollControl::eventKeyDownBinding_ReadMacro7()
 {
 	patternEditor->storeMacroFromCursor(7);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro8()
+void PianoRollControl::eventKeyDownBinding_ReadMacro8()
 {
 	patternEditor->storeMacroFromCursor(8);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro9()
+void PianoRollControl::eventKeyDownBinding_ReadMacro9()
 {
 	patternEditor->storeMacroFromCursor(9);
 }
 
-void PatternEditorControl::eventKeyDownBinding_ReadMacro0()
+void PianoRollControl::eventKeyDownBinding_ReadMacro0()
 {
 	patternEditor->storeMacroFromCursor(0);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro1()
+void PianoRollControl::eventKeyDownBinding_WriteMacro1()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1096,7 +1096,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro1()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro2()
+void PianoRollControl::eventKeyDownBinding_WriteMacro2()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1104,7 +1104,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro2()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro3()
+void PianoRollControl::eventKeyDownBinding_WriteMacro3()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1112,7 +1112,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro3()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro4()
+void PianoRollControl::eventKeyDownBinding_WriteMacro4()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1120,7 +1120,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro4()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro5()
+void PianoRollControl::eventKeyDownBinding_WriteMacro5()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1128,7 +1128,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro5()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro6()
+void PianoRollControl::eventKeyDownBinding_WriteMacro6()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1136,7 +1136,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro6()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro7()
+void PianoRollControl::eventKeyDownBinding_WriteMacro7()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1144,7 +1144,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro7()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro8()
+void PianoRollControl::eventKeyDownBinding_WriteMacro8()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1152,7 +1152,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro8()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro9()
+void PianoRollControl::eventKeyDownBinding_WriteMacro9()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1160,7 +1160,7 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro9()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_WriteMacro0()
+void PianoRollControl::eventKeyDownBinding_WriteMacro0()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1168,99 +1168,99 @@ void PatternEditorControl::eventKeyDownBinding_WriteMacro0()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_Q()
+void PianoRollControl::eventKeyDownBinding_SC_Q()
 {
 	patternEditor->getCursor().channel = 0 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_W()
+void PianoRollControl::eventKeyDownBinding_SC_W()
 {
 	patternEditor->getCursor().channel = 1 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_E()
+void PianoRollControl::eventKeyDownBinding_SC_E()
 {
 	patternEditor->getCursor().channel = 2 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_R()
+void PianoRollControl::eventKeyDownBinding_SC_R()
 {
 	patternEditor->getCursor().channel = 3 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_T()
+void PianoRollControl::eventKeyDownBinding_SC_T()
 {
 	patternEditor->getCursor().channel = 4 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_Z()
+void PianoRollControl::eventKeyDownBinding_SC_Z()
 {
 	patternEditor->getCursor().channel = 5 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_U()
+void PianoRollControl::eventKeyDownBinding_SC_U()
 {
 	patternEditor->getCursor().channel = 6 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_I()
+void PianoRollControl::eventKeyDownBinding_SC_I()
 {
 	patternEditor->getCursor().channel = 7 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_A()
+void PianoRollControl::eventKeyDownBinding_SC_A()
 {
 	patternEditor->getCursor().channel = 8 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_S()
+void PianoRollControl::eventKeyDownBinding_SC_S()
 {
 	patternEditor->getCursor().channel = 9 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_D()
+void PianoRollControl::eventKeyDownBinding_SC_D()
 {
 	patternEditor->getCursor().channel = 10 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_F()
+void PianoRollControl::eventKeyDownBinding_SC_F()
 {
 	patternEditor->getCursor().channel = 11 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_G()
+void PianoRollControl::eventKeyDownBinding_SC_G()
 {
 	patternEditor->getCursor().channel = 12 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_H()
+void PianoRollControl::eventKeyDownBinding_SC_H()
 {
 	patternEditor->getCursor().channel = 13 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_J()
+void PianoRollControl::eventKeyDownBinding_SC_J()
 {
 	patternEditor->getCursor().channel = 14 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_K()
+void PianoRollControl::eventKeyDownBinding_SC_K()
 {
 	patternEditor->getCursor().channel = 15 % patternEditor->getNumChannels();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd()
+void PianoRollControl::eventKeyDownBinding_SC_IncreaseRowInsertAdd()
 {
 	increaseRowInsertAdd();
 	notifyUpdate();
 }
 
-void PatternEditorControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd()
+void PianoRollControl::eventKeyDownBinding_SC_DecreaseRowInsertAdd()
 {
 	decreaseRowInsertAdd();
 	notifyUpdate();
 }
 
-void PatternEditorControl::eventKeyDownBinding_DeleteNote()
+void PianoRollControl::eventKeyDownBinding_DeleteNote()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1268,7 +1268,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteNote()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect()
+void PianoRollControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1276,7 +1276,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteNoteVolumeAndEffect()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_DeleteVolumeAndEffect()
+void PianoRollControl::eventKeyDownBinding_DeleteVolumeAndEffect()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1284,7 +1284,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteVolumeAndEffect()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_DeleteEffect()
+void PianoRollControl::eventKeyDownBinding_DeleteEffect()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1292,7 +1292,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteEffect()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
+void PianoRollControl::eventKeyDownBinding_PreviousChannel()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1328,7 +1328,7 @@ void PatternEditorControl::eventKeyDownBinding_PreviousChannel()
 	notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 }
 
-void PatternEditorControl::eventKeyDownBinding_NextChannel()
+void PianoRollControl::eventKeyDownBinding_NextChannel()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1356,7 +1356,7 @@ void PatternEditorControl::eventKeyDownBinding_NextChannel()
 	notifyUpdate(AdvanceCodeColumn); // needed for backtraceInstrument-feature 
 }
 
-void PatternEditorControl::eventKeyDownBinding_InsertNote()
+void PianoRollControl::eventKeyDownBinding_InsertNote()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1364,7 +1364,7 @@ void PatternEditorControl::eventKeyDownBinding_InsertNote()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_InsertLine()
+void PianoRollControl::eventKeyDownBinding_InsertLine()
 {
 	// prevent unnecessary screen refreshing through listener callback
 	patternEditor->setLazyUpdateNotifications(true);
@@ -1372,7 +1372,7 @@ void PatternEditorControl::eventKeyDownBinding_InsertLine()
 	patternEditor->setLazyUpdateNotifications(false);
 }
 
-void PatternEditorControl::eventKeyDownBinding_DeleteNoteSlot()
+void PianoRollControl::eventKeyDownBinding_DeleteNoteSlot()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1386,7 +1386,7 @@ void PatternEditorControl::eventKeyDownBinding_DeleteNoteSlot()
 	}
 }
 
-void PatternEditorControl::eventKeyDownBinding_DeleteLine()
+void PianoRollControl::eventKeyDownBinding_DeleteLine()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1400,27 +1400,27 @@ void PatternEditorControl::eventKeyDownBinding_DeleteLine()
 	}
 }
 
-void PatternEditorControl::eventKeyDownBinding_InsIncSelection()
+void PianoRollControl::eventKeyDownBinding_InsIncSelection()
 {
 	patternEditor->insIncSelection();
 }
 
-void PatternEditorControl::eventKeyDownBinding_InsDecSelection()
+void PianoRollControl::eventKeyDownBinding_InsDecSelection()
 {
 	patternEditor->insDecSelection();
 }
 
-void PatternEditorControl::eventKeyDownBinding_InsIncTrack()
+void PianoRollControl::eventKeyDownBinding_InsIncTrack()
 {
 	patternEditor->insIncTrack();
 }
 
-void PatternEditorControl::eventKeyDownBinding_InsDecTrack()
+void PianoRollControl::eventKeyDownBinding_InsDecTrack()
 {
 	patternEditor->insDecTrack();
 }
 
-void PatternEditorControl::eventKeyDownBinding_CutTrack()
+void PianoRollControl::eventKeyDownBinding_CutTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1443,7 +1443,7 @@ void PatternEditorControl::eventKeyDownBinding_CutTrack()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyDownBinding_CopyTrack()
+void PianoRollControl::eventKeyDownBinding_CopyTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1466,7 +1466,7 @@ void PatternEditorControl::eventKeyDownBinding_CopyTrack()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyDownBinding_PasteTrack()
+void PianoRollControl::eventKeyDownBinding_PasteTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1483,7 +1483,7 @@ void PatternEditorControl::eventKeyDownBinding_PasteTrack()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyDownBinding_TransparentPasteTrack()
+void PianoRollControl::eventKeyDownBinding_TransparentPasteTrack()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1499,7 +1499,7 @@ void PatternEditorControl::eventKeyDownBinding_TransparentPasteTrack()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyDownBinding_CutPattern()
+void PianoRollControl::eventKeyDownBinding_CutPattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1522,7 +1522,7 @@ void PatternEditorControl::eventKeyDownBinding_CutPattern()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyDownBinding_CopyPattern()
+void PianoRollControl::eventKeyDownBinding_CopyPattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1545,7 +1545,7 @@ void PatternEditorControl::eventKeyDownBinding_CopyPattern()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyDownBinding_PastePattern()
+void PianoRollControl::eventKeyDownBinding_PastePattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1563,7 +1563,7 @@ void PatternEditorControl::eventKeyDownBinding_PastePattern()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyDownBinding_TransparentPastePattern()
+void PianoRollControl::eventKeyDownBinding_TransparentPastePattern()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1581,17 +1581,17 @@ void PatternEditorControl::eventKeyDownBinding_TransparentPastePattern()
 	cursor = cc;
 }
 
-void PatternEditorControl::eventKeyCharBinding_Undo()
+void PianoRollControl::eventKeyCharBinding_Undo()
 {
 	patternEditor->undo();
 }
 
-void PatternEditorControl::eventKeyCharBinding_Redo()
+void PianoRollControl::eventKeyCharBinding_Redo()
 {
 	patternEditor->redo();
 }
 
-void PatternEditorControl::eventKeyCharBinding_Cut()
+void PianoRollControl::eventKeyCharBinding_Cut()
 {
 	// if invoked by key combination, the view shouldn't be adjusted
 	// to ensure a visible cursor, just stay where you are
@@ -1604,7 +1604,7 @@ void PatternEditorControl::eventKeyCharBinding_Cut()
 	patternEditor->cut(PatternEditor::ClipBoardTypeSelection);
 }
 
-void PatternEditorControl::eventKeyCharBinding_Copy()
+void PianoRollControl::eventKeyCharBinding_Copy()
 {
 	// if invoked by key combination, the view shouldn't be adjusted
 	// to ensure a visible cursor, just stay where you are
@@ -1617,7 +1617,7 @@ void PatternEditorControl::eventKeyCharBinding_Copy()
 	patternEditor->copy(PatternEditor::ClipBoardTypeSelection);
 }
 
-void PatternEditorControl::eventKeyCharBinding_Paste()
+void PianoRollControl::eventKeyCharBinding_Paste()
 {
 	if (patternEditor->getCursor() == cursorCopy && menuInvokeChannel != -1)
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, false, menuInvokeChannel);
@@ -1628,7 +1628,7 @@ void PatternEditorControl::eventKeyCharBinding_Paste()
 		notifyUpdate();
 }
 
-void PatternEditorControl::eventKeyCharBinding_TransparentPaste()
+void PianoRollControl::eventKeyCharBinding_TransparentPaste()
 {
 	if (patternEditor->getCursor() == cursorCopy && menuInvokeChannel != -1)
 		patternEditor->paste(PatternEditor::ClipBoardTypeSelection, true, menuInvokeChannel);
@@ -1639,7 +1639,7 @@ void PatternEditorControl::eventKeyCharBinding_TransparentPaste()
 		notifyUpdate();
 }
 
-void PatternEditorControl::eventKeyCharBinding_SelectAll()
+void PianoRollControl::eventKeyCharBinding_SelectAll()
 {
 	PatternEditor::Selection currentSelection = patternEditor->getSelection();
 
@@ -1656,14 +1656,14 @@ void PatternEditorControl::eventKeyCharBinding_SelectAll()
 	}
 }
 
-void PatternEditorControl::eventKeyCharBinding_MuteChannel()
+void PianoRollControl::eventKeyCharBinding_MuteChannel()
 {
 	muteChannels[patternEditor->getCursor().channel] = !muteChannels[patternEditor->getCursor().channel];
 	PPEvent e(eValueChanged, &muteChannels, sizeof(muteChannels));
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
-void PatternEditorControl::eventKeyCharBinding_InvertMuting()
+void PianoRollControl::eventKeyCharBinding_InvertMuting()
 {
 	for (pp_int32 i = 0; i < patternEditor->getNumChannels(); i++)
 		muteChannels[i] = !muteChannels[i];
@@ -1671,7 +1671,7 @@ void PatternEditorControl::eventKeyCharBinding_InvertMuting()
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
-void PatternEditorControl::eventKeyCharBinding_Interpolate()
+void PianoRollControl::eventKeyCharBinding_Interpolate()
 {
 	patternEditor->interpolateValuesInSelection();
 }

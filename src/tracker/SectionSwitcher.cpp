@@ -34,6 +34,7 @@
 #include "Container.h"
 #include "SectionInstruments.h"
 #include "SectionSamples.h"
+#include "SectionPianoRoll.h"
 #include "ScopesControl.h"
 #include "PatternEditorControl.h"
 
@@ -60,6 +61,8 @@ void SectionSwitcher::showBottomSection(ActiveBottomSections section, bool paint
 		case ActiveBottomSectionSampleEditor:
 			tracker.sectionSamples->show(false);
 			break;
+		case ActiveBottomSectionPianoRoll:
+			tracker.sectionPianoRoll->show(false);
 		case ActiveBottomSectionNone:
 			break;
 	}
@@ -76,6 +79,9 @@ void SectionSwitcher::showBottomSection(ActiveBottomSections section, bool paint
 			break;
 		case ActiveBottomSectionSampleEditor:
 			tracker.sectionSamples->show(true);
+			break;
+		case ActiveBottomSectionPianoRoll:
+			tracker.sectionPianoRoll->show(true);
 			break;
 		case ActiveBottomSectionNone:
 			tracker.rearrangePatternEditorControl();
@@ -183,8 +189,8 @@ void SectionSwitcher::switchToSubMenu(ActiveLowerSectionPages lsPageNew)
 	showSubMenu(lowerSectionPage);
 }
 
-void SectionSwitcher::hideBottomSection() 
-{ 
+void SectionSwitcher::hideBottomSection()
+{
 	if (bottomSection != ActiveBottomSectionNone)
 		showBottomSection(ActiveBottomSectionNone, false);
 }

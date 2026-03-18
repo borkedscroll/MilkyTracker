@@ -61,6 +61,9 @@ add_executable(tracker
     PatternTools.cpp
     PeakLevelControl.cpp
     Piano.cpp
+	PianoRollControl.cpp
+	PianoRollControlKeyboard.cpp
+	PianoRollControlEventListener.cpp
     PianoControl.cpp
     PlayerController.cpp
     PlayerLogic.cpp
@@ -83,6 +86,7 @@ add_executable(tracker
     SectionOptimize.cpp
     SectionQuickOptions.cpp
     SectionSamples.cpp
+	SectionPianoRoll.cpp
     SectionSettings.cpp
     SectionSwitcher.cpp
     SectionTranspose.cpp
@@ -154,6 +158,7 @@ add_executable(tracker
     PeakLevelControl.h
     Piano.h
     PianoControl.h
+	PianoRollControl.h
     PlayerController.h
     PlayerCriticalSection.h
     PlayerLogic.h
@@ -180,6 +185,7 @@ add_executable(tracker
     SectionOptimize.h
     SectionQuickOptions.h
     SectionSamples.h
+    SectionPianoRoll.h
     SectionSettings.h
     SectionSwitcher.h
     SectionTranspose.h

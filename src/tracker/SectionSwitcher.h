@@ -40,7 +40,8 @@ public:
 	{
 		ActiveBottomSectionNone = 0,
 		ActiveBottomSectionInstrumentEditor,
-		ActiveBottomSectionSampleEditor
+		ActiveBottomSectionSampleEditor,
+		ActiveBottomSectionPianoRoll
 	};
 	
 #ifdef __LOWRES__

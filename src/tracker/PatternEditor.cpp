@@ -118,6 +118,7 @@ PatternEditor::PatternEditor() :
 	numVisibleChannels(-1),
 	autoResize(false), 
 	currentInstrument(1),
+	currentRowSkip(0),
 	instrumentEnabled(true),
 	instrumentBackTrace(false),
 	currentOctave(5),
@@ -267,6 +268,23 @@ pp_int32 PatternEditor::getCurrentActiveInstrument()
 		return 0;
 	
 	return currentInstrument;
+}
+
+pp_int32 PatternEditor::getCurrentRowSkip() {
+	return currentRowSkip;
+}
+
+
+void PatternEditor::incCurrentRowSkip() {
+	if (currentRowSkip < 32) {
+		currentRowSkip++;
+	}
+}
+
+void PatternEditor::decCurrentRowSkip() {
+	if (currentRowSkip > 0) {
+		currentRowSkip--;
+	}
 }
 
 bool PatternEditor::undo()

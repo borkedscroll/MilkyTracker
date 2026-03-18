@@ -58,6 +58,7 @@
 #include "SectionSettings.h"
 #include "SectionInstruments.h"
 #include "SectionSamples.h"
+#include "SectionPianoRoll.h"
 #include "SectionQuickOptions.h"
 #include "SectionOptimize.h"
 #include "SectionAbout.h"
@@ -181,6 +182,8 @@ Tracker::Tracker() :
 	sections->add(sectionInstruments);
 	sectionSamples = new SectionSamples(*this);
 	sections->add(sectionSamples);
+	sectionPianoRoll = new SectionPianoRoll(*this);
+	sections->add(sectionPianoRoll);
 	sectionQuickOptions = new SectionQuickOptions(*this);
 	sections->add(sectionQuickOptions);
 	sectionOptimize = new SectionOptimize(*this);
@@ -868,7 +871,8 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				if (event->getID() != eCommand)
 					break;
 
-				eventKeyDownBinding_InvokeSectionSamples();
+				eventKeyDownBinding_InvokeSectionPianoRoll();
+				// eventKeyDownBinding_InvokeSectionSamples();
 				break;
 			}
 
@@ -952,15 +956,15 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 #endif
 			
 			case BUTTON_ORDERLIST_SONGLENGTH_PLUS:
-				moduleEditor->increaseSongLength();
-				updateSongLength();
-				sectionHDRecorder->adjustOrders();
+				// moduleEditor->increaseSongLength();
+				// updateSongLength();
+				// sectionHDRecorder->adjustOrders();
 				break;
 
 			case BUTTON_ORDERLIST_SONGLENGTH_MINUS:
-				moduleEditor->decreaseSongLength();
-				updateSongLength();
-				sectionHDRecorder->adjustOrders();
+				// moduleEditor->decreaseSongLength();
+				// updateSongLength();
+				// sectionHDRecorder->adjustOrders();
 				break;
 			
 			case BUTTON_ORDERLIST_REPEAT_PLUS:
@@ -2323,36 +2327,40 @@ void Tracker::expandOrderlist(bool b)
 	
 	if (b)
 	{
-		container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_PLUS)->setLocation(PPPoint(x+2 + 78-2, y+2+12+12+12));
-		container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_MINUS)->setLocation(PPPoint(x+2 + 78-2 + 17, y+2+12+12+12));
+		// container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_PLUS)->setLocation(PPPoint(x+2 + 78-2, y+2+12+12+12));
+		// container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_MINUS)->setLocation(PPPoint(x+2 + 78-2 + 17, y+2+12+12+12));
 		
 		container->getControlByID(BUTTON_ORDERLIST_REPEAT_PLUS)->hide(true);
 		container->getControlByID(BUTTON_ORDERLIST_REPEAT_MINUS)->hide(true);
 		container->getControlByID(STATICTEXT_ORDERLIST_SONGLENGTH)->setLocation(PPPoint(x+ 8*12, y+2+12+12+12+2+12));
+		container->getControlByID(STATICTEXT_ROWSKIP)->hide(false);
 		container->getControlByID(STATICTEXT_ORDERLIST_REPEAT)->hide(true);
 		container->getControlByID(0)->hide(true);
 		container->getControlByID(1)->hide(false);
 		container->getControlByID(2)->hide(true);
 		static_cast<PPButton*>(container->getControlByID(BUTTON_ORDERLIST_EXTENT))->setText(TrackerConfig::stringButtonExtended);
-	
+
+		// orderlist height
 		PPSize size = container->getControlByID(LISTBOX_ORDERLIST)->getSize();
-		size.height = 60;
+		size.height = 60+50;
 		container->getControlByID(LISTBOX_ORDERLIST)->setSize(size);
 	}
 	else
 	{
-		container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_PLUS)->setLocation(PPPoint(x+2 + 78-2, y+2+12+12+12));
-		container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_MINUS)->setLocation(PPPoint(x+2 + 78-2 + 17, y+2+12+12+12));
+		// container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_PLUS)->setLocation(PPPoint(x+2 + 78-2, y+2+12+12+12));
+		// container->getControlByID(BUTTON_ORDERLIST_SONGLENGTH_MINUS)->setLocation(PPPoint(x+2 + 78-2 + 17, y+2+12+12+12));
 
 		container->getControlByID(BUTTON_ORDERLIST_REPEAT_PLUS)->hide(false);
 		container->getControlByID(BUTTON_ORDERLIST_REPEAT_MINUS)->hide(false);
 		container->getControlByID(STATICTEXT_ORDERLIST_SONGLENGTH)->setLocation(PPPoint(x+2 + 8*7, y+2+12+12+12+2));
+		container->getControlByID(STATICTEXT_ROWSKIP)->hide(true);
 		container->getControlByID(STATICTEXT_ORDERLIST_REPEAT)->hide(false);
 		container->getControlByID(0)->hide(false);
 		container->getControlByID(1)->hide(true);
 		container->getControlByID(2)->hide(false);
 		static_cast<PPButton*>(container->getControlByID(BUTTON_ORDERLIST_EXTENT))->setText(TrackerConfig::stringButtonCollapsed);
 
+		// orderlist height
 		PPSize size = container->getControlByID(LISTBOX_ORDERLIST)->getSize();
 		size.height = 36;
 		container->getControlByID(LISTBOX_ORDERLIST)->setSize(size);

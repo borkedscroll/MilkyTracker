@@ -622,6 +622,16 @@ void Tracker::eventKeyDownBinding_InvokeSectionSamples()
 	screen->paint(true, true);
 }
 
+
+void Tracker::eventKeyDownBinding_InvokeSectionPianoRoll()
+{
+	if (screen->getModalControl())
+		return;
+
+	sectionSwitcher->showBottomSection(SectionSwitcher::ActiveBottomSectionPianoRoll);
+	screen->paint(true, true);
+}
+
 void Tracker::eventKeyDownBinding_InvokeSectionTranspose()
 {
 	if (screen->getModalControl())

@@ -128,8 +128,13 @@ void Tracker::processShortcutsMilkyTracker(PPEvent* event)
 			case VK_F9:
 			case VK_F10:
 			case VK_F11:
+				getPatternEditor()->decCurrentRowSkip();
+				updateRowSkip();
+				break;
 			case VK_F12:
 			{
+				getPatternEditor()->incCurrentRowSkip();
+				updateRowSkip();
 				if (::getKeyModifier())
 					goto processBindings;
 					

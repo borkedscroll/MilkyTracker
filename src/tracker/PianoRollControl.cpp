@@ -1,7 +1,5 @@
 /*
- *  tracker/PatternEditorControl.cpp
- *
- *  Copyright 2009 Peter Barth
+ *  tracker/PianoRollControl.cpp
  *
  *  This file is part of Milkytracker.
  *
@@ -20,7 +18,7 @@
  *
  */
 
-#include "PatternEditorControl.h"
+#include "PianoRollControl.h"
 #include "GraphicsAbstract.h"
 #include "Tools.h"
 #include "Screen.h"
@@ -39,7 +37,7 @@
 
 #define SCROLLBARWIDTH  SCROLLBUTTONSIZE
 
-PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
+PianoRollControl::PianoRollControl(pp_int32 id, PPScreen* parentScreen, EventListenerInterface* eventListener, 
 										   const PPPoint& location, const PPSize& size, bool border/*= true*/) :
 	PPControl(id, parentScreen, eventListener, location, size),
 	borderColor(&TrackerConfig::colorThemeMain),
@@ -76,13 +74,12 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	eventKeyDownBindingsMilkyTracker(NULL), scanCodeBindingsMilkyTracker(NULL), eventKeyDownBindingsFastTracker(NULL), scanCodeBindingsFastTracker(NULL),
 	editMode(),
 	selectionKeyModifier(0),
-	lastAction(RMouseDownActionInvalid), RMouseDownInChannelHeading(-1),
+	lastAction(RMouseDownActionInvalid), RMouseDownInChannelHeading(-1)
 
-	dialog(NULL),
-	transposeHandlerResponder(NULL)
+	// dialog(NULL),
+	// transposeHandlerResponder(NULL)
 {
 	fprintf(stderr, "%d %d\n", undoInfo.startIndex, undoInfo.startPos);
-
 	// default color
 	bgColor.r = 0;
 	bgColor.g = 0;
@@ -98,79 +95,79 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 	// context menu
 	editMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
 
-  if( !parentScreen->getClassic() ){
+	if( !parentScreen->getClassic() ){
 
-    moduleMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
-    moduleMenuControl->setSubMenu(true);
-    moduleMenuControl->addEntry("New", MAINMENU_ZAP);
-    moduleMenuControl->addEntry("Load", MAINMENU_LOAD);
-    moduleMenuControl->addEntry("Save", MAINMENU_SAVE);
-    moduleMenuControl->addEntry("Save as", MAINMENU_SAVEAS);
-    moduleMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    moduleMenuControl->addEntry("Optimize", MAINMENU_OPTIMIZE);
-    moduleMenuControl->addEntry("Playback mode", MAINMENU_QUICKOPTIONS);
+		moduleMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+		moduleMenuControl->setSubMenu(true);
+		moduleMenuControl->addEntry("New", MAINMENU_ZAP);
+		moduleMenuControl->addEntry("Load", MAINMENU_LOAD);
+		moduleMenuControl->addEntry("Save", MAINMENU_SAVE);
+		moduleMenuControl->addEntry("Save as", MAINMENU_SAVEAS);
+		moduleMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		moduleMenuControl->addEntry("Optimize", MAINMENU_OPTIMIZE);
+		moduleMenuControl->addEntry("Playback mode", MAINMENU_QUICKOPTIONS);
 
-    patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
-    patternMenuControl->setSubMenu(true);
-    patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
-    patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
-    patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
+		patternMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+		patternMenuControl->setSubMenu(true);
+		patternMenuControl->addEntry("Render to sample", BUTTON_PATTERN_CAPTURE);
+		// patternMenuControl->addEntry("Transpose", MAINMENU_TRANSPOSE);
+		patternMenuControl->addEntry("Advanced edit", MAINMENU_ADVEDIT);
 
-    
-	  keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
-    keyboardMenuControl->setSubMenu(true);
-    keyboardMenuControl->addEntry("Octave +", BUTTON_OCTAVE_PLUS );
-    keyboardMenuControl->addEntry("Octave -", BUTTON_OCTAVE_MINUS );
-    keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
-    keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
 
-    editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
-    editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
-    editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
+		keyboardMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+		keyboardMenuControl->setSubMenu(true);
+		keyboardMenuControl->addEntry("Octave +", BUTTON_OCTAVE_PLUS );
+		keyboardMenuControl->addEntry("Octave -", BUTTON_OCTAVE_MINUS );
+		keyboardMenuControl->addEntry("Step +", BUTTON_ADD_PLUS );
+		keyboardMenuControl->addEntry("Step -", BUTTON_ADD_MINUS );
 
-    channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
-    channelMenuControl->setSubMenu(true);
-    channelMenuControl->addEntry("Mute", MenuCommandIDMuteChannel);
-    channelMenuControl->addEntry("Solo", MenuCommandIDSoloChannel);
-    channelMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
-    channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    channelMenuControl->addEntry("Select", MenuCommandIDSelectChannel);
-    channelMenuControl->addEntry("Select all", MenuCommandIDSelectAll);
-    channelMenuControl->addEntry("Swap", MenuCommandIDSwapChannels);
-    channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    channelMenuControl->addEntry("Add", MenuCommandIDChannelAdd);
-    channelMenuControl->addEntry("Delete", MenuCommandIDChannelDelete);
-    editMenuControl->addEntry("Channel     >", 0xFFFF, channelMenuControl);
-    
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    editMenuControl->addEntry("Undo", MenuCommandIDUndo);
-    editMenuControl->addEntry("Redo", MenuCommandIDRedo);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    editMenuControl->addEntry("Cut", MenuCommandIDCut);
-    editMenuControl->addEntry("Copy", MenuCommandIDCopy);
-    editMenuControl->addEntry("Paste", MenuCommandIDPaste);
-    editMenuControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
+		editMenuControl->addEntry("Song        >", 0xFFFF, moduleMenuControl);
+		editMenuControl->addEntry("Pattern     >", 0xFFFF, patternMenuControl);
+		editMenuControl->addEntry("Keyboard    >", 0xFFFF, keyboardMenuControl);
 
-  }else{
-    editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
-    editMenuControl->addEntry("Solo channel", MenuCommandIDSoloChannel);
-    editMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    editMenuControl->addEntry("Mark channel", MenuCommandIDSelectChannel);
-    editMenuControl->addEntry("Mark all", MenuCommandIDSelectAll);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    editMenuControl->addEntry("Undo", MenuCommandIDUndo);
-    editMenuControl->addEntry("Redo", MenuCommandIDRedo);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    editMenuControl->addEntry("Cut", MenuCommandIDCut);
-    editMenuControl->addEntry("Copy", MenuCommandIDCopy);
-    editMenuControl->addEntry("Paste", MenuCommandIDPaste);
-    editMenuControl->addEntry("Porous Paste", MenuCommandIDPorousPaste);
-    editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
-    editMenuControl->addEntry("Swap channels", MenuCommandIDSwapChannels);
-  }
+		channelMenuControl = new PPContextMenu(4, parentScreen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine);
+		channelMenuControl->setSubMenu(true);
+		channelMenuControl->addEntry("Mute", MenuCommandIDMuteChannel);
+		channelMenuControl->addEntry("Solo", MenuCommandIDSoloChannel);
+		channelMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
+		channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		channelMenuControl->addEntry("Select", MenuCommandIDSelectChannel);
+		channelMenuControl->addEntry("Select all", MenuCommandIDSelectAll);
+		channelMenuControl->addEntry("Swap", MenuCommandIDSwapChannels);
+		channelMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		channelMenuControl->addEntry("Add", MenuCommandIDChannelAdd);
+		channelMenuControl->addEntry("Delete", MenuCommandIDChannelDelete);
+		editMenuControl->addEntry("Channel     >", 0xFFFF, channelMenuControl);
+
+		editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		editMenuControl->addEntry("Undo", MenuCommandIDUndo);
+		editMenuControl->addEntry("Redo", MenuCommandIDRedo);
+		editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		editMenuControl->addEntry("Cut", MenuCommandIDCut);
+		editMenuControl->addEntry("Copy", MenuCommandIDCopy);
+		editMenuControl->addEntry("Paste", MenuCommandIDPaste);
+		editMenuControl->addEntry("Paste Porous", MenuCommandIDPorousPaste);
+		editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		editMenuControl->addEntry("Toggle follow", BUTTON_ABOUT_FOLLOWSONG);
+
+	}else{
+		editMenuControl->addEntry("Mute channel", MenuCommandIDMuteChannel);
+		editMenuControl->addEntry("Solo channel", MenuCommandIDSoloChannel);
+		editMenuControl->addEntry("Unmute all", MenuCommandIDUnmuteAll);
+		editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		editMenuControl->addEntry("Mark channel", MenuCommandIDSelectChannel);
+		editMenuControl->addEntry("Mark all", MenuCommandIDSelectAll);
+		editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		editMenuControl->addEntry("Undo", MenuCommandIDUndo);
+		editMenuControl->addEntry("Redo", MenuCommandIDRedo);
+		editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		editMenuControl->addEntry("Cut", MenuCommandIDCut);
+		editMenuControl->addEntry("Copy", MenuCommandIDCopy);
+		editMenuControl->addEntry("Paste", MenuCommandIDPaste);
+		editMenuControl->addEntry("Porous Paste", MenuCommandIDPorousPaste);
+		editMenuControl->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+		editMenuControl->addEntry("Swap channels", MenuCommandIDSwapChannels);
+	}
 
 	//editMenuControl->setNotifyParentOnHide(true);
 
@@ -184,10 +181,10 @@ PatternEditorControl::PatternEditorControl(pp_int32 id, PPScreen* parentScreen, 
 		
 	setRecordMode(false);
 	
-	transposeHandlerResponder = new TransposeHandlerResponder(*this);
+	// transposeHandlerResponder = new TransposeHandlerResponder(*this);
 }
 
-PatternEditorControl::~PatternEditorControl()
+PianoRollControl::~PianoRollControl()
 {
 	if (patternEditor)
 		patternEditor->removeNotificationListener(this);
@@ -204,11 +201,11 @@ PatternEditorControl::~PatternEditorControl()
 	delete eventKeyDownBindingsFastTracker;
 	delete scanCodeBindingsFastTracker;
 
-	delete transposeHandlerResponder;
-	delete dialog;
+	// delete transposeHandlerResponder;
+	// delete dialog;
 }
 
-void PatternEditorControl::setFont(PPFont* font)
+void PianoRollControl::setFont(PPFont* font)
 {
 	this->font = font;
 	
@@ -225,7 +222,7 @@ void PatternEditorControl::setFont(PPFont* font)
 	assureCursorVisible();
 }
 
-void PatternEditorControl::setSize(const PPSize& size)
+void PianoRollControl::setSize(const PPSize& size)
 {
 	PPControl::setSize(size);
 	
@@ -246,7 +243,7 @@ void PatternEditorControl::setSize(const PPSize& size)
 	assureCursorVisible();
 }
 
-void PatternEditorControl::setLocation(const PPPoint& location)
+void PianoRollControl::setLocation(const PPPoint& location)
 {
 	PPControl::setLocation(location);
 
@@ -273,8 +270,9 @@ static inline pp_int32 myMod(pp_int32 a, pp_int32 b)
 	return r < 0 ? b + r : r;
 }
 
-void PatternEditorControl::paint(PPGraphicsAbstract* g)
+void PianoRollControl::paint(PPGraphicsAbstract* g)
 {
+	// printf("hello paint\n");
 	if (!isVisible())
 		return;
 
@@ -946,7 +944,7 @@ void PatternEditorControl::paint(PPGraphicsAbstract* g)
 	vRightScrollbar->paint(g);
 }
 
-void PatternEditorControl::attachPatternEditor(PatternEditor* patternEditor)
+void PianoRollControl::attachPatternEditor(PatternEditor* patternEditor)
 {
 	if (this->patternEditor)
 		this->patternEditor->removeNotificationListener(this);
@@ -960,7 +958,7 @@ void PatternEditorControl::attachPatternEditor(PatternEditor* patternEditor)
 	adjustScrollBarPositionsAndSizes();
 }
 
-void PatternEditorControl::reset()
+void PianoRollControl::reset()
 {
 	patternEditor->reset();
 
@@ -971,7 +969,7 @@ void PatternEditorControl::reset()
 	startSelection = false;
 }
 
-void PatternEditorControl::setNumVisibleChannels(pp_int32 channels)
+void PianoRollControl::setNumVisibleChannels(pp_int32 channels)
 {
 	patternEditor->setNumVisibleChannels(channels);
 
@@ -980,7 +978,7 @@ void PatternEditorControl::setNumVisibleChannels(pp_int32 channels)
 	validate();	
 }
 
-pp_int32 PatternEditorControl::getRowCountWidth()
+pp_int32 PianoRollControl::getRowCountWidth()
 {
 	if (pattern == NULL)
 		return 0;
@@ -1001,7 +999,7 @@ pp_int32 PatternEditorControl::getRowCountWidth()
 	}
 }
 
-void PatternEditorControl::adjustExtents()
+void PianoRollControl::adjustExtents()
 {
 	visibleWidth = size.width - (getRowCountWidth() + 4) - SCROLLBARWIDTH*2;	
 	visibleHeight = size.height - (font->getCharHeight() + 4) - SCROLLBARWIDTH*2;
@@ -1028,7 +1026,7 @@ void PatternEditorControl::adjustExtents()
 	cursorSizes[7] = font->getCharWidth(); // operand digit 2
 }
 
-void PatternEditorControl::adjustVerticalScrollBarPositions(mp_sint32 startIndex)
+void PianoRollControl::adjustVerticalScrollBarPositions(mp_sint32 startIndex)
 {
 	// adjust scrollbar positions
 	if (properties.scrollMode != ScrollModeStayInCenter)
@@ -1046,7 +1044,7 @@ void PatternEditorControl::adjustVerticalScrollBarPositions(mp_sint32 startIndex
 	}
 }
 
-void PatternEditorControl::adjustHorizontalScrollBarPositions(mp_sint32 startPos)
+void PianoRollControl::adjustHorizontalScrollBarPositions(mp_sint32 startPos)
 {
 	pp_int32 visibleItems = (visibleWidth) / slotSize;
 
@@ -1056,7 +1054,7 @@ void PatternEditorControl::adjustHorizontalScrollBarPositions(mp_sint32 startPos
 	hBottomScrollbar->setBarPosition((pp_int32)(startPos*(65536.0f/v)));
 }
 
-void PatternEditorControl::adjustScrollBarSizes()
+void PianoRollControl::adjustScrollBarSizes()
 {
 	float s;
 	if (properties.scrollMode != ScrollModeStayInCenter)
@@ -1080,7 +1078,7 @@ void PatternEditorControl::adjustScrollBarSizes()
 	hBottomScrollbar->setBarSize((pp_int32)(s*65536.0f), false);
 }
 
-void PatternEditorControl::adjustScrollBarPositionsAndSizes()
+void PianoRollControl::adjustScrollBarPositionsAndSizes()
 {
 	if (pattern == NULL)
 		return;
@@ -1091,13 +1089,13 @@ void PatternEditorControl::adjustScrollBarPositionsAndSizes()
 	adjustHorizontalScrollBarPositions(startPos);
 }
 
-void PatternEditorControl::setScrollbarPositions(mp_sint32 startIndex, mp_sint32 startPos)
+void PianoRollControl::setScrollbarPositions(mp_sint32 startIndex, mp_sint32 startPos)
 {
 	adjustHorizontalScrollBarPositions(startPos);
 	adjustVerticalScrollBarPositions(startIndex);
 }
 
-void PatternEditorControl::scrollCursorUp()
+void PianoRollControl::scrollCursorUp()
 {
 	if (pattern == NULL)
 		return;
@@ -1109,7 +1107,7 @@ void PatternEditorControl::scrollCursorUp()
 	eventKeyDownBinding_UP();
 }
 
-void PatternEditorControl::scrollCursorDown()
+void PianoRollControl::scrollCursorDown()
 {
 	if (pattern == NULL)
 		return;
@@ -1121,7 +1119,7 @@ void PatternEditorControl::scrollCursorDown()
 	eventKeyDownBinding_DOWN();
 }
 
-void PatternEditorControl::assureCursorVisible(bool row/* = true*/, bool channel/* = true*/)
+void PianoRollControl::assureCursorVisible(bool row/* = true*/, bool channel/* = true*/)
 {
 	if (pattern == NULL)
 		return;
@@ -1228,7 +1226,7 @@ void PatternEditorControl::assureCursorVisible(bool row/* = true*/, bool channel
 
 }
 
-mp_sint32 PatternEditorControl::getNextRecordingChannel(mp_sint32 currentChannel)
+mp_sint32 PianoRollControl::getNextRecordingChannel(mp_sint32 currentChannel)
 {
 	if (currentChannel < 0 || currentChannel >= TrackerConfig::MAXCHANNELS)
 		return -1;
@@ -1243,7 +1241,7 @@ mp_sint32 PatternEditorControl::getNextRecordingChannel(mp_sint32 currentChannel
 	return currentChannel;
 }
 
-void PatternEditorControl::advanceRow(bool assureCursor/* = true*/, bool repaint/* = true*/)
+void PianoRollControl::advanceRow(bool assureCursor/* = true*/, bool repaint/* = true*/)
 {
 	if (!properties.rowAdvance)
 		return;
@@ -1262,7 +1260,7 @@ void PatternEditorControl::advanceRow(bool assureCursor/* = true*/, bool repaint
 	pp_int32 res = 0;
 	if (cursor.row > pattern->rows-1)
 	{
-		res = notifyUpdate(PatternEditorControl::AdvanceCodeWrappedEnd);
+		res = notifyUpdate(PianoRollControl::AdvanceCodeWrappedEnd);
 	}
 
 	if (!res && cursor.row > pattern->rows-1)
@@ -1277,7 +1275,7 @@ void PatternEditorControl::advanceRow(bool assureCursor/* = true*/, bool repaint
 		parentScreen->paintControl(this);
 }
 
-void PatternEditorControl::advance()
+void PianoRollControl::advance()
 {
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 
@@ -1292,7 +1290,7 @@ void PatternEditorControl::advance()
 	assureCursorVisible();
 }
 
-void PatternEditorControl::setRow(pp_int32 row, bool bAssureCursorVisible/* = true*/)
+void PianoRollControl::setRow(pp_int32 row, bool bAssureCursorVisible/* = true*/)
 {
 	if (pattern == NULL)
 		return;
@@ -1306,7 +1304,7 @@ void PatternEditorControl::setRow(pp_int32 row, bool bAssureCursorVisible/* = tr
 		assureCursorVisible(true, false);
 }
 
-void PatternEditorControl::setChannel(pp_int32 chn, pp_int32 posInner)
+void PianoRollControl::setChannel(pp_int32 chn, pp_int32 posInner)
 {
 	if (pattern == NULL)
 		return;
@@ -1321,7 +1319,7 @@ void PatternEditorControl::setChannel(pp_int32 chn, pp_int32 posInner)
 	assureCursorVisible(false, true);
 }
 
-void PatternEditorControl::validate()
+void PianoRollControl::validate()
 {
 	if (pattern == NULL)
 		return;
@@ -1392,12 +1390,12 @@ void PatternEditorControl::validate()
 		selectionEnd.row = pattern->rows-1;*/
 }
 
-bool PatternEditorControl::hasValidSelection() const
+bool PianoRollControl::hasValidSelection() const
 {
 	return patternEditor->hasValidSelection();
 }
 
-void PatternEditorControl::markChannel(pp_int32 channel, bool invert/* = true*/)
+void PianoRollControl::markChannel(pp_int32 channel, bool invert/* = true*/)
 {
 	PatternEditor::Selection currentSelection = patternEditor->getSelection();
 
@@ -1415,17 +1413,17 @@ void PatternEditorControl::markChannel(pp_int32 channel, bool invert/* = true*/)
 	}	
 }
 
-void PatternEditorControl::selectAll()
+void PianoRollControl::selectAll()
 {
 	patternEditor->selectAll();
 }
 
-void PatternEditorControl::deselectAll()
+void PianoRollControl::deselectAll()
 {
 	patternEditor->resetSelection();
 }
 
-void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
+void PianoRollControl::executeMenuCommand(pp_int32 commandId)
 {
 	switch (commandId)
 	{
@@ -1513,7 +1511,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 		case MAINMENU_SAVE:
 		case MAINMENU_SAVEAS:
 		case MAINMENU_CONFIG:
-		case MAINMENU_TRANSPOSE:
+		// case MAINMENU_TRANSPOSE:
 		case MAINMENU_ADVEDIT:
 		case MAINMENU_QUICKOPTIONS:
 		case MAINMENU_OPTIMIZE:
@@ -1538,7 +1536,7 @@ void PatternEditorControl::executeMenuCommand(pp_int32 commandId)
 	
 }
 
-void PatternEditorControl::switchEditMode(EditModes mode)
+void PianoRollControl::switchEditMode(EditModes mode)
 {
 	switch (mode)
 	{
@@ -1566,7 +1564,7 @@ void PatternEditorControl::switchEditMode(EditModes mode)
 	editMode = mode;
 }
 
-void PatternEditorControl::unmuteAll()
+void PianoRollControl::unmuteAll()
 {
 	memset(muteChannels, 0, sizeof(muteChannels));	
 
@@ -1574,12 +1572,13 @@ void PatternEditorControl::unmuteAll()
 	eventListener->handleEvent(reinterpret_cast<PPObject*>(this), &e);
 }
 
-void PatternEditorControl::setRecordMode(bool b)
+void PianoRollControl::setRecordMode(bool b)
 {
+	printf("setRecordMode\n");
 	cursorColor = b ? &TrackerConfig::colorPatternEditorCursorLineHighLight : &TrackerConfig::colorPatternEditorCursorLine;
 }
 
-void PatternEditorControl::editorNotification(EditorBase* sender, EditorBase::EditorNotifications notification)
+void PianoRollControl::editorNotification(EditorBase* sender, EditorBase::EditorNotifications notification)
 {
 	switch (notification)
 	{

@@ -347,6 +347,16 @@ void Tracker::updateSongLength(bool repaint)
 	screen->paintControl(container, repaint);
 }
 
+
+void Tracker::updateRowSkip(bool repaint)
+{
+	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_ORDERLIST));
+
+	static_cast<PPStaticText*>(container->getControlByID(STATICTEXT_ROWSKIP))->setIntValue(getPatternEditor()->getCurrentRowSkip(), 2);
+
+	screen->paintControl(container, repaint);
+}
+
 ///////////////////////////////////////////
 // update song restart position field
 ///////////////////////////////////////////
@@ -556,6 +566,7 @@ void Tracker::updateSongInfo(bool repaint/* = true*/)
 				
 	updatePatternIndex(repaint);
 	updatePatternLength(repaint);
+	updateRowSkip(repaint);
 				
 	updateInstrumentsListBox(repaint);
 	updateSamplesListBox(repaint);				

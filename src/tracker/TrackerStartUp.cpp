@@ -216,7 +216,7 @@ void Tracker::startUp(bool forceNoSplash/* = false*/)
 	}
 
 	screen->setClassic( settingsDatabase->restore("CLASSIC")->getBoolValue() );
-	initUI();	
+	initUI();
 
 	// apply ALL settings, not just the different ones
 	applySettings(settingsDatabase, NULL, true, false);

@@ -94,7 +94,8 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 		// separated out releaseplay filtering from the currently in use isLiveRecording to break as few things as possible while filtering note key repeats from the OS
 		// 
 		// Key repeat suppression is enabled when we are looking at a note column (wider suppression than previously done with isLiveRecording)
-		releasePlay = patternEditorControl->getCursorPosInner() == 0;
+
+		// releasePlay = patternEditorControl->getCursorPosInner() == 0;
 
 		if (releasePlay)
 		{

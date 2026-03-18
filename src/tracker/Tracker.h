@@ -70,6 +70,7 @@ class SectionHDRecorder;
 class SectionSettings;
 class SectionInstruments;
 class SectionSamples;
+class SectionPianoRoll;
 class SectionQuickOptions;
 class SectionOptimize;
 class SectionAbout;
@@ -145,6 +146,7 @@ private:
 	SectionSettings* sectionSettings;
 	SectionInstruments* sectionInstruments;
 	SectionSamples* sectionSamples;
+	SectionPianoRoll* sectionPianoRoll;
 	SectionQuickOptions* sectionQuickOptions;
 	SectionOptimize* sectionOptimize;
 	SectionAbout* sectionAbout;
@@ -195,7 +197,7 @@ private:
 	PPListBox* listBoxSamples;
 
 	// - build UI parts --------------------------------------------------------
-	void initSectionOrderlist(pp_int32 x, pp_int32 y);
+	void initSectionOrderlist(pp_int32 x, pp_int32 y, pp_int32 width, pp_int32 height);
 	void initSectionSpeed(pp_int32 x, pp_int32 y);
 	void initSectionPattern(pp_int32 x, pp_int32 y);
 	void initSectionMainOptions(pp_int32 x, pp_int32 y);
@@ -258,6 +260,7 @@ private:
 	void updatePatternAddAndOctave(bool repaint = true);
 
 	void updatePatternIndex(bool repaint = true);
+	void updateRowSkip(bool repaint = true);
 	void updatePatternLength(bool repaint = true);
 	void updatePattern(bool repaint = true);
 
@@ -545,6 +548,7 @@ private:
 	void eventKeyDownBinding_InvokeMainScreen();
 	void eventKeyDownBinding_InvokeSectionInstruments();
 	void eventKeyDownBinding_InvokeSectionSamples();
+	void eventKeyDownBinding_InvokeSectionPianoRoll();
 	void eventKeyDownBinding_InvokeSectionSettings();
 	void eventKeyDownBinding_InvokeSectionTranspose();
 	void eventKeyDownBinding_InvokeSectionAdvancedEdit();
@@ -619,6 +623,7 @@ private:
 	friend class SectionReplacedInstrumentListBoxes;
 	friend class SectionInstruments;
 	friend class SectionSamples;
+	friend class SectionPianoRoll;
 	friend class SectionHDRecorder;
 	friend class SectionQuickOptions;
 	friend class SectionOptimize;

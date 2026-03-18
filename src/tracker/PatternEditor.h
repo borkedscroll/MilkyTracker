@@ -207,6 +207,7 @@ private:
 	pp_int32 numVisibleChannels;
 	bool autoResize;
 	pp_int32 currentInstrument;
+	pp_int32 currentRowSkip;
 	bool instrumentEnabled;
 	bool instrumentBackTrace;
 	pp_int32 currentOctave;
@@ -274,6 +275,11 @@ public:
 	// dealing with instrument
 	void setCurrentInstrument(pp_int32 ins) { currentInstrument = ins; }
 	pp_int32 getCurrentActiveInstrument();	
+
+	pp_int32 getCurrentRowSkip();
+	void incCurrentRowSkip();
+	void decCurrentRowSkip();
+
 	void enableInstrument(bool instrumentEnabled) { this->instrumentEnabled = instrumentEnabled; }
 	bool isInstrumentEnabled() { return instrumentEnabled; }	
 	// Intelligent instrument backtrace?
