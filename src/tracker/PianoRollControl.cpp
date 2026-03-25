@@ -370,6 +370,7 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 
 	// ----------------- colors ----------------- 
 	PPColor noteColor = TrackerConfig::colorPatternEditorNote;
+	PPColor bgColor = TrackerConfig::colorPatternEditorBackground;
 	PPColor insColor = TrackerConfig::colorPatternEditorInstrument;
 	PPColor volColor = TrackerConfig::colorPatternEditorVolume;
 	PPColor effColor = TrackerConfig::colorPatternEditorEffect;
@@ -378,6 +379,7 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 	PPColor hiLightSecondary = TrackerConfig::colorHighLight_2;	
 	PPColor hiLightPrimaryRow = TrackerConfig::colorRowHighLight_1;
 	PPColor hiLightSecondaryRow = TrackerConfig::colorRowHighLight_2;
+	PPColor pianoKeyWhite = PPColor(20,20,20);
 
 	PPColor textColor = PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText);
 
@@ -473,19 +475,31 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 			row = i;
 		}
 
-		// draw rows
-		if (!(i % properties.highlightSpacingPrimary) && properties.highLightRowPrimary)
-		{
-			g->setColor(hiLightPrimaryRow);			
+
+		// // draw rows
+		// if (!(i % properties.highlightSpacingPrimary) && properties.highLightRowPrimary)
+		// {
+		// 	g->setColor(hiLightPrimaryRow);			
+		// 	for (pp_int32 k = 0; k < (pp_int32)font->getCharHeight(); k++)
+		// 		g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
+		// }
+		// else if (!(i % properties.highlightSpacingSecondary) && properties.highLightRowSecondary)
+		// {
+		// 	g->setColor(hiLightSecondaryRow);			
+		// 	for (pp_int32 k = 0; k < (pp_int32)font->getCharHeight(); k++)
+		// 		g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
+		// }
+
+		if ((i % 12) % 7 % 2) {
+			g->setColor(bgColor);
 			for (pp_int32 k = 0; k < (pp_int32)font->getCharHeight(); k++)
-				g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
-		}
-		else if (!(i % properties.highlightSpacingSecondary) && properties.highLightRowSecondary)
-		{
-			g->setColor(hiLightSecondaryRow);			
+				g->drawHLine(startx - (fontCharWidth3x + 4), startx+visibleWidth, py + k);
+		} else {
+			g->setColor(pianoKeyWhite);
 			for (pp_int32 k = 0; k < (pp_int32)font->getCharHeight(); k++)
-				g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
+				g->drawHLine(startx - (fontCharWidth3x + 4), startx+visibleWidth, py + k);
 		}
+
 		
 		// draw position line
 		if ((row == songPos.row && songPosOrderListIndex == songPos.orderListIndex) ||
@@ -532,6 +546,8 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 		// draw channel title rects
 		for (j = startPos; j < numVisibleChannels; j++)
 		{
+
+
 			pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
 			
 			// columns are already in invisible area => abort
@@ -838,7 +854,28 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 		// px += fontCharWidth2x*3-1 + properties.spacing*2;
 		// px += fontCharWidth1x;
 
-		g->setColor(*borderColor);
+		// g->setColor(*borderColor);
+		// printf("spacing: %d, bool: %d\n", properties.highlightSpacingPrimary, properties.highLightRowPrimary);
+		pp_int32 primarySpacing = 32; // TODO: FIX HARDCODED SETTINGS
+		pp_int32 secondarySpacing = 8;
+		if (!(j % primarySpacing)){
+			g->setColor(hiLightPrimaryRow);
+			g->drawVLine(location.y, location.y + size.height, px+1);
+		} else if (!(j % secondarySpacing)) {
+			g->setColor(hiLightSecondaryRow);
+			g->drawVLine(location.y, location.y + size.height, px+1);
+		} else {
+			g->setColor(PPColor(30,30,30));
+		}
+		// } else {
+		// 	g->setColor(PPColor(30,30,30));
+		// }
+		// if (!(i % properties.highlightSpacingPrimary) && properties.highLightRowPrimary)
+		// {
+		// 	g->setColor(hiLightPrimaryRow);			
+		// 	for (pp_int32 k = 0; k < (pp_int32)font->getCharHeight(); k++)
+		// 		g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
+		// }
 		
 		g->drawVLine(location.y, location.y + size.height, px);
 		
