@@ -1297,6 +1297,7 @@ void SectionPianoRoll::realUpdate(bool repaint, bool force, bool reAttach)
 	screen->paintControl(container3, false);
 	screen->paintControl(sampleEditorControl, false);
 	screen->paintControl(pianoRollControl, false);
+	screen->paintControl(tracker.getPatternEditorControl(), false);
 	if (repaint)
 		screen->update();		
 }
@@ -1305,6 +1306,7 @@ void SectionPianoRoll::updateSampleWindow(bool repaint/* = true*/)
 {
 	PPScreen* screen = tracker.screen;
 	// screen->paintControl(sampleEditorControl, false);
+	screen->paintControl(pianoRollControl, false);
 	if (repaint)
 		screen->update();		
 }

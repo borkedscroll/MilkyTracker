@@ -152,7 +152,8 @@ pp_int32 PianoRollControl::dispatchEvent(PPEvent* event)
 
 				PPPoint cp = *p;
 				
-				cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
+				// cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
+				cp.x-=location.x + SCROLLBARWIDTH + (font->getCharWidth()*3) + 4;
 				cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight() + 4;
 				
 				if (cp.x < 0)
@@ -165,14 +166,151 @@ pp_int32 PianoRollControl::dispatchEvent(PPEvent* event)
 				}
 				else if (cp.y < 0) break;
 
-				pp_int32 i = (cp.x / slotSize) + startPos;
-				if (i < 0 || i > patternEditor->getNumChannels()-1)
-					break;
+				// pp_int32 i = (cp.x / slotSize) + startPos;
+				// if (i < 0 || i > patternEditor->getNumChannels()-1)
+				// 	break;
 
-				invokeMenu(i, *p);
+				// invokeMenu(i, *p);
+
+				pp_int32 newStartIndex = cp.y / font->getCharHeight();
+				pp_int32 newStartPos = cp.x / (font->getCharWidth()*3+1);
+				
+				pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
+				pp_int32 visibleChannels = (visibleWidth) / (font->getCharWidth()*3+1);
+				pp_int32 currentNote = 0;
+				
+				// backup selection, so that it may be restored when context menu is activated by long-press
+				patternEditor->getSelection().backup();
+				preCursor = patternEditor->getCursor();
+
+				if (newStartIndex < visibleRows && newStartIndex >= 0)
+				{
+					if (newStartIndex + startIndex < 0)
+					{
+						if (properties.advancedDnd) {
+							patternEditor->resetSelection();
+							preCursor.row = 0;
+						} else {
+							break;
+						}
+					}
+					else if (properties.advancedDnd && newStartIndex + startIndex >= patternEditor->getNumRows())
+					{
+						preCursor.row = patternEditor->getNumRows() - 1;
+					}
+					else
+					{
+						currentNote = newStartIndex + startIndex;
+					}
+				}
+
+				if (newStartPos < visibleHeight && newStartPos >= 0)
+				{
+					selectionTicker = 0;
+					startSelection = true;
+
+					if (newStartPos + startPos < 0)
+						break;
+
+					preCursor.channel = 0;
+					preCursor.row = newStartPos + startPos;
+					if (properties.advancedDnd) {
+						preCursor.inner = 0;
+					}
+				
+					if (preCursor.channel >= patternEditor->getNumChannels())
+					{
+						if (properties.advancedDnd) {
+							// clicked beyond rightmost channel, start selection from the edge
+							patternEditor->resetSelection();
+							preCursor.channel = patternEditor->getNumChannels() - 1;
+							preCursor.inner = 7;
+						} else {
+							break;
+						}
+					}
+					else if (properties.advancedDnd)
+					{
+						// find which column in the channel was clicked
+						pp_int32 innerPos = cp.x % slotSize;
+						for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
+						{
+							if (innerPos >= cursorPositions[i] &&
+								innerPos < cursorPositions[i+1])
+							{
+								preCursor.inner = i;
+								break;
+							}
+						}
+					}
+					if (properties.advancedDnd) {
+						if (patternEditor->selectionContains(preCursor))
+						{
+							startSelection = false;
+							moveSelection = true;
+							moveSelectionInitialPos = preCursor;
+							moveSelectionFinalPos = preCursor;
+						}
+						else
+						{
+							if (!(::getKeyModifier() & selectionKeyModifier))
+							{
+								// start selection from mouse cursor position
+								patternEditor->getSelection().start = preCursor;
+								patternEditor->getSelection().end = preCursor;
+							}
+							else
+							{
+								// resume selection from mouse cursor position
+								if (!patternEditor->getSelection().start.isValid())
+									patternEditor->getSelection().start = patternEditor->getCursor();
+								patternEditor->getSelection().end = preCursor;
+							}
+						}
+					} else {
+						// start selecting row
+						if (!(::getKeyModifier() & selectionKeyModifier))
+						{
+							patternEditor->getSelection().start.channel = patternEditor->getSelection().end.channel = preCursor.channel;
+							patternEditor->getSelection().start.row = patternEditor->getSelection().end.row = preCursor.row;
+						}
+						else
+						{
+							patternEditor->getSelection().end.channel = preCursor.channel;
+							patternEditor->getSelection().end.row = preCursor.row;
+						}
+						
+						pp_int32 innerPos = cp.x % slotSize;
+						
+						preCursor.inner = 0;
+						if (!(::getKeyModifier() & selectionKeyModifier))
+							patternEditor->getSelection().start.inner = 0;
+						patternEditor->getSelection().end.inner = 0;
+						for (pp_uint32 i = 0; i < sizeof(cursorPositions) - 1; i++)
+						{
+							if (innerPos >= cursorPositions[i] &&
+								innerPos < cursorPositions[i+1])
+							{
+								preCursor.inner = i;
+								if (!(::getKeyModifier() & selectionKeyModifier))
+									patternEditor->getSelection().start.inner = i;
+								patternEditor->getSelection().end.inner = i;
+								break;
+							}
+						}
+					}
+
+				}
+
+				ppreCursor = &preCursor;
+				patternEditor->setCursor(*ppreCursor);
+				patternEditor->deleteCursorSlotDataEntire();
+				parentScreen->paintControl(this);
+				notifyUpdate();
 			}
 			
-			goto leave;
+			// goto leave;
+			break;
 		}
 
 		case eRMouseUp:
@@ -208,7 +346,6 @@ pp_int32 PianoRollControl::dispatchEvent(PPEvent* event)
 			RMouseDownInChannelHeading = -1;
 			menuInvokeChannel = -1;
 			parentScreen->paintControl(this);
-
 			break;
 		}
 
@@ -257,7 +394,8 @@ pp_int32 PianoRollControl::dispatchEvent(PPEvent* event)
 			{
 				PPPoint cp = *p;
 				
-				cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
+				// cp.x-=location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
+				cp.x-=location.x + SCROLLBARWIDTH + (font->getCharWidth()*3) + 4;
 				cp.y-=location.y + SCROLLBARWIDTH + font->getCharHeight() + 4;
 				
 				if (cp.y <  -((pp_int32)font->getCharHeight() + 6))
@@ -269,11 +407,13 @@ pp_int32 PianoRollControl::dispatchEvent(PPEvent* event)
 				// select new row by clicking on row number
 				if (cp.x < -3)
 				{			
-					pp_int32 newStartIndex = cp.y / font->getCharHeight();					
-					pp_int32 newStartPos = cp.x / slotSize;
+					pp_int32 newStartIndex = cp.y / font->getCharHeight();
+					// pp_int32 newStartPos = cp.x / slotSize;
+					pp_int32 newStartPos = cp.x / (font->getCharWidth()*3+1);
 					
 					pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
-					pp_int32 visibleChannels = (visibleWidth) / slotSize;
+					// pp_int32 visibleChannels = (visibleWidth) / slotSize;
+					pp_int32 visibleChannels = (visibleWidth) / (font->getCharWidth()*3+1);
 					
 					// copy of current selection
 					patternEditor->getSelection().backup();
@@ -353,10 +493,13 @@ unmuteAll:
 
 				pp_int32 newStartIndex = cp.y / font->getCharHeight();
 
-				pp_int32 newStartPos = cp.x / slotSize;
+				// pp_int32 newStartPos = cp.x / slotSize;
+				pp_int32 newStartPos = cp.x / (font->getCharWidth()*3+1);
 				
 				pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
-				pp_int32 visibleChannels = (visibleWidth) / slotSize;
+				// pp_int32 visibleChannels = (visibleWidth) / slotSize;
+				pp_int32 visibleChannels = (visibleWidth) / (font->getCharWidth()*3+1);
+				pp_int32 currentNote = 0;
 				
 				// backup selection, so that it may be restored when context menu is activated by long-press
 				patternEditor->getSelection().backup();
@@ -392,7 +535,8 @@ unmuteAll:
 					}
 					else
 					{
-						preCursor.row = newStartIndex + startIndex;
+						// preCursor.row = newStartIndex + startIndex;
+						currentNote = newStartIndex + startIndex;
 					}
 				}
 
@@ -404,7 +548,9 @@ unmuteAll:
 					if (newStartPos + startPos < 0)
 						break;
 
-					preCursor.channel = newStartPos + startPos;
+					// preCursor.channel = newStartPos + startPos;
+					preCursor.channel = 0;
+					preCursor.row = newStartPos + startPos;
 					if (properties.advancedDnd) {
 						preCursor.inner = 0;
 					}
@@ -495,8 +641,12 @@ unmuteAll:
 				}
 
 				ppreCursor = &preCursor;
+				patternEditor->setCursor(*ppreCursor);
+				patternEditor->writeNote((12*8 - currentNote), true, NULL);
 
-				//parentScreen->paintControl(this);
+				// parentScreen->paintControl(this);
+				parentScreen->paintControl(this);
+				notifyUpdate();
 			}
 
 			break;
@@ -665,7 +815,8 @@ markOrMoveSelection:
 
 			if (cp2.x > size.width - SCROLLBARWIDTH /*- (slotSize>>1)*/)
 			{
-				if (startPos + (visibleWidth / slotSize) < patternEditor->getNumChannels())
+				// if (startPos + (visibleWidth / slotSize) < patternEditor->getNumChannels())
+				if (startPos + (visibleWidth / (font->getCharWidth()*3+1)) < pattern->rows)
 					startPos++;
 			}
 			else if (cp2.x < SCROLLBARWIDTH + (signed)getRowCountWidth() + 4)
@@ -678,7 +829,7 @@ markOrMoveSelection:
 			{
 				if (properties.scrollMode != ScrollModeStayInCenter)
 				{
-					if (startIndex + (visibleHeight / font->getCharHeight()) < pattern->rows)
+					if (startIndex + (visibleHeight / font->getCharHeight()) < (12*8))
 						startIndex++;
 				}
 				else
@@ -715,14 +866,17 @@ markOrMoveSelection:
 
 			pp_int32 newStartIndex = cp.y / font->getCharHeight();
 			
-			pp_int32 newStartPos = cp.x / slotSize;
+			// pp_int32 newStartPos = cp.x / slotSize;
+			pp_int32 newStartPos = cp.x / (font->getCharWidth()*3+1);
 			
 			if (properties.advancedDnd) {
 				pp_int32 visibleRows = (visibleHeight) / font->getCharHeight();
 				pp_int32 visibleChannels = (visibleWidth) / slotSize;
 				
-				mp_sint32 cursorPositionRow = newStartIndex + startIndex;
-				mp_sint32 cursorPositionChannel = newStartPos + startPos;
+				// mp_sint32 cursorPositionRow = newStartIndex + startIndex;
+				mp_sint32 cursorPositionRow = newStartPos + startPos;
+				// mp_sint32 cursorPositionChannel = newStartPos + startPos;
+				mp_sint32 cursorPositionChannel = 0;
 				mp_sint32 cursorPositionInner;
 				
 				if (moveSelection)
@@ -769,8 +923,10 @@ markOrMoveSelection:
 					setScrollbarPositions(startIndex, startPos);
 				}
 			} else {
-				mp_sint32 cursorPositionRow = newStartIndex + startIndex;
-				mp_sint32 cursorPositionChannel = newStartPos + startPos;
+				// mp_sint32 cursorPositionRow = newStartIndex + startIndex;
+				// mp_sint32 cursorPositionChannel = newStartPos + startPos;
+				mp_sint32 cursorPositionRow = newStartPos + startPos;
+				mp_sint32 cursorPositionChannel = 0;
 				
 				if (cursorPositionRow < 0) cursorPositionRow = 0;
 				if (cursorPositionChannel < 0) cursorPositionChannel = 0;
@@ -992,10 +1148,11 @@ pp_int32 PianoRollControl::handleEvent(PPObject* sender, PPEvent* event)
 		{
 			pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
 			startIndex += scrollAmount;
-			if (startIndex + visibleItems > pattern->rows)
-				startIndex = pattern->rows - visibleItems;
+			if (startIndex + visibleItems > (12*8))
+				startIndex = (12*8) - visibleItems;
 
-			float v = (float)(pattern->rows - visibleItems);
+			// float v = (float)(pattern->rows - visibleItems);
+			float v = (float)((12*8) - visibleItems);
 
 			vLeftScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
 			vRightScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
@@ -1022,7 +1179,8 @@ pp_int32 PianoRollControl::handleEvent(PPObject* sender, PPEvent* event)
 		
 			pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
 
-			float v = (float)(pattern->rows - visibleItems);
+			// float v = (float)(pattern->rows - visibleItems);
+			float v = (float)((12*8) - visibleItems);
 
 			vLeftScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
 			vRightScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
@@ -1049,14 +1207,16 @@ pp_int32 PianoRollControl::handleEvent(PPObject* sender, PPEvent* event)
 			case ScrollModeToCenter:
 			{
 				pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();		
-				float v = (float)(pattern->rows - visibleItems);
+				// float v = (float)(pattern->rows - visibleItems);
+				float v = (float)((12*8) - visibleItems);
 				startIndex = (pp_uint32)(v*pos);
 				vLeftScrollbar->setBarPosition((pp_int32)(pos*65536.0f));
 				vRightScrollbar->setBarPosition((pp_int32)(pos*65536.0f));
 				break;
 			}
 			case ScrollModeStayInCenter:
-				patternEditor->getCursor().row = (pp_int32)(pos*(pattern->rows-1));
+				// patternEditor->getCursor().row = (pp_int32)(pos*(pattern->rows-1));
+				patternEditor->getCursor().row = (pp_int32)(pos*((12*8)-1));
 				assureCursorVisible(true, false);
 				break;
 		}
@@ -1069,9 +1229,11 @@ pp_int32 PianoRollControl::handleEvent(PPObject* sender, PPEvent* event)
 		if (startPos)
 			startPos--;
 
-		pp_int32 visibleItems = (visibleWidth) / slotSize;
+		// pp_int32 visibleItems = (visibleWidth) / slotSize;
+		pp_int32 visibleItems = (visibleWidth) / (font->getCharWidth()*3+1);
 
-		float v = (float)(patternEditor->getNumChannels() - visibleItems);
+		// float v = (float)(patternEditor->getNumChannels() - visibleItems);
+		float v = (float)(pattern->rows - visibleItems);
 
 		hTopScrollbar->setBarPosition((pp_int32)(startPos*(65536.0f/v)));
 		hBottomScrollbar->setBarPosition((pp_int32)(startPos*(65536.0f/v)));
@@ -1081,12 +1243,15 @@ pp_int32 PianoRollControl::handleEvent(PPObject* sender, PPEvent* event)
 			 sender == reinterpret_cast<PPObject*>(hTopScrollbar)) &&
 			 event->getID() == eBarScrollDown)
 	{
-		pp_int32 visibleItems = (visibleWidth) / slotSize;
+		// pp_int32 visibleItems = (visibleWidth) / slotSize;
+		pp_int32 visibleItems = (visibleWidth) / (font->getCharWidth()*3+1);
 
-		if (startPos + visibleItems < (signed)patternEditor->getNumChannels())
+		// if (startPos + visibleItems < (signed)patternEditor->getNumChannels())
+		if (startPos + visibleItems < (signed)pattern->rows)
 			startPos++;
 
-		float v = (float)(patternEditor->getNumChannels() - visibleItems);
+		// float v = (float)(patternEditor->getNumChannels() - visibleItems);
+		float v = (float)(pattern->rows - visibleItems);
 
 		if (v < 0.0f)
 			v = 0.0f;
@@ -1102,9 +1267,11 @@ pp_int32 PianoRollControl::handleEvent(PPObject* sender, PPEvent* event)
 
 		float pos = reinterpret_cast<PPScrollbar*>(sender)->getBarPosition()/65536.0f;
 
-		pp_int32 visibleItems = (visibleWidth) / slotSize;
+		// pp_int32 visibleItems = (visibleWidth) / slotSize;
+		pp_int32 visibleItems = (visibleWidth) / (font->getCharWidth()*3+1);
 		
-		float v = (float)(patternEditor->getNumChannels() - visibleItems);
+		// float v = (float)(patternEditor->getNumChannels() - visibleItems);
+		float v = (float)(pattern->rows - visibleItems);
 
 		if (v < 0.0f)
 			v = 0.0f;
@@ -1172,7 +1339,8 @@ pp_int32 PianoRollControl::handleEvent(PPObject* sender, PPEvent* event)
 		pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
 		if ((vLeftScrollbar->getBarPosition() == 65536 || 
 			 vRightScrollbar->getBarPosition() == 65536) &&
-			startIndex + visibleItems <= pattern->rows)
+			// startIndex + visibleItems <= pattern->rows)
+			startIndex + visibleItems <= (12*8))
 		{
 			startIndex++;
 		}

@@ -343,7 +343,7 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 	// ;----------------- some constants
 	const pp_uint32 fontCharWidth3x = font->getCharWidth()*3 + 1;
 	const pp_uint32 fontCharWidth2x = font->getCharWidth()*2 + 1;
-	const pp_uint32 fontCharWidth1x = font->getCharWidth()*1 + 1;	
+	const pp_uint32 fontCharWidth1x = font->getCharWidth()*1 + 1;
 	
 	PatternTools* patternTools = &this->patternTools;
 	
@@ -355,7 +355,8 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 	}
 
 	// ;----------------- start painting rows
-	pp_int32 startx = location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
+	// pp_int32 startx = location.x + SCROLLBARWIDTH + getRowCountWidth() + 4;
+	pp_int32 startx = location.x + SCROLLBARWIDTH + fontCharWidth3x + 4;
 	
 	pp_int32 previousPatternIndex = currentOrderlistIndex;
 	pp_int32 previousRowIndex = 0;
@@ -381,10 +382,12 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 	PPColor textColor = PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText);
 
 	pp_int32 numVisibleChannels = patternEditor->getNumChannels();
+	pp_int32 numNotes = 12*8;
 
 	for (pp_int32 i2 = startIndex;; i2++) // row loop
 	{
 		i = i2 < 0 ? startIndex - i2 - 1: i2;
+		// printf("startindex: %d\n", startIndex);
 
 		pp_int32 px = location.x + SCROLLBARWIDTH;
 
@@ -464,7 +467,7 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 		}
 		else
 		{
-			if (i2 < 0 || i2 >= pattern->rows)
+			if (i2 < 0 || i2 >= numNotes)
 				continue;
 
 			row = i;
@@ -515,18 +518,20 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 		else
 			g->setColor(textColor);
 
-		if (properties.hexCount)
-			PatternTools::convertToHex(name, myMod(row, pattern->rows), properties.prospective ? 2 : PatternTools::getHexNumDigits(pattern->rows-1));
-		else
-			PatternTools::convertToDec(name, myMod(row, pattern->rows), properties.prospective ? 3 : PatternTools::getDecNumDigits(pattern->rows-1));
-		
-		g->drawString(name, px, py); // pattern position?
+		// PATTERN POSITION
+		// if (properties.hexCount)
+		// 	PatternTools::convertToHex(name, myMod(row, pattern->rows), properties.prospective ? 2 : PatternTools::getHexNumDigits(pattern->rows-1));
+		// else
+		// 	PatternTools::convertToDec(name, myMod(row, pattern->rows), properties.prospective ? 3 : PatternTools::getDecNumDigits(pattern->rows-1));
+		//
+		// g->drawString(name, px, py);
+			
+		patternTools->getNoteName(name, (numNotes - i));
+		g->drawString(name, px, py);
 
-		// draw channels
+		// draw channel title rects
 		for (j = startPos; j < numVisibleChannels; j++)
 		{
-
-
 			pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
 			
 			// columns are already in invisible area => abort
@@ -596,9 +601,12 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 			g->drawString(name, px + (slotSize>>1)-(((pp_int32)strlen(name)*font->getCharWidth())>>1), py+1);
 		}
 
-		for (j = startPos; j < numVisibleChannels; j++) // loop visible channels
+		// draw channel notes
+		// for (j = startPos; j < numVisibleChannels; j++)
+		for (j = startPos; j < pattern->rows; j++) // loop visible channels
 		{
-			pp_int32 px = (j-startPos) * slotSize + startx;
+			// pp_int32 px = (j-startPos) * slotSize + startx;
+			pp_int32 px = (j-startPos) * fontCharWidth3x + startx;
 			
 			// columns are already in invisible area => abort
 			if (px >= location.x + size.width)
@@ -674,7 +682,8 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 				g->drawHLine(px + cursorPositions[cursor.inner], px + cursorPositions[cursor.inner]+cursorSizes[cursor.inner], py + font->getCharHeight());
 			}
 
-			patternTools->setPosition(pattern, j, row);
+			// patternTools->setPosition(pattern, j, row);
+			patternTools->setPosition(pattern, 0, j);
 
 			PPColor noteCol = noteColor;
 
@@ -692,146 +701,154 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 			}
 
 			g->setColor(noteCol);
-			patternTools->getNoteName(name, patternTools->getNote());
-			g->drawString(name,px, py); // note
+			if (patternTools->getNote() == (numNotes-i)){
+				patternTools->getNoteName(name, patternTools->getNote());
+				g->drawString(name,px, py); // note
+			} else {
+				patternTools->getNoteName(name, 0);
+				g->drawString(name,px, py); // note
+			}
 
-			px += fontCharWidth3x + properties.spacing;
+			// px += fontCharWidth3x + properties.spacing;
+			//
+			// if (muteChannels[j])
+			// {
+			// 	PPColor insCol = insColor;
+			// 	insCol.scaleFixed(properties.muteFade);
+			// 	g->setColor(insCol);
+			// }
+			// else
+			// 	g->setColor(insColor);
+			//
+			// pp_uint32 i = patternTools->getInstrument();
+			//
+			// if (i)
+			// 	patternTools->convertToHex(name, i, 2);
+			// else 
+			// {
+			// 	name[0] = name[1] = '\xf4';
+			// 	name[2] = 0;
+			// }
+			//
+			// if (name[0] == '0')
+			// name[0] = '\xf4';
+			//
+			// g->drawString(name,px, py); // instrument
 			
-			if (muteChannels[j])
-			{
-				PPColor insCol = insColor;
-				insCol.scaleFixed(properties.muteFade);
-				g->setColor(insCol);
-			}
-			else
-				g->setColor(insColor);
-
-			pp_uint32 i = patternTools->getInstrument();
-
-			if (i)
-				patternTools->convertToHex(name, i, 2);
-			else 
-			{
-				name[0] = name[1] = '\xf4';
-				name[2] = 0;
-			}
+			// px += fontCharWidth2x + properties.spacing;
+			//
+			// if (muteChannels[j])
+			// {
+			// 	PPColor volCol = volColor;
+			// 	volCol.scaleFixed(properties.muteFade);
+			// 	g->setColor(volCol);
+			// }
+			// else
+			// 	g->setColor(volColor);
+			//
+			// pp_int32 eff, op;
+			//
+			// name[0] = name[1] = '\xf4';
+			// name[2] = 0;
+			// if (pattern->effnum >= 2)
+			// {
+			// 	patternTools->getFirstEffect(eff, op);
+			//
+			// 	patternTools->convertEffectsToFT2(eff, op);
+			//
+			// 	pp_int32 volume = patternTools->getVolumeFromEffect(eff, op);
+			//
+			// 	patternTools->getVolumeName(name, volume);
+			// }
+			//
+			// g->drawString(name,px, py); // volume
 			
-			if (name[0] == '0')
-			name[0] = '\xf4';
+			// px += fontCharWidth2x + properties.spacing;
+			//
+			// if (muteChannels[j])
+			// {
+			// 	PPColor effCol = effColor;
+			// 	effCol.scaleFixed(properties.muteFade);
+			// 	g->setColor(effCol);
+			// }
+			// else
+			// 	g->setColor(effColor);
+			//
+			// if (pattern->effnum == 1)
+			// {
+			// 	patternTools->getFirstEffect(eff, op);				
+			// 	patternTools->convertEffectsToFT2(eff, op);
+			// }
+			// else
+			// {
+			// 	patternTools->getNextEffect(eff, op);				
+			// 	patternTools->convertEffectsToFT2(eff, op);
+			// }
+			//
+			// if (eff == 0 && op == 0)
+			// {
+			// 	name[0] = properties.zeroEffectCharacter;
+			// 	name[1] = 0;
+			// }
+			// else
+			// {
+			// 	patternTools->getEffectName(name, eff);
+			// }
+			//
+			// g->drawString(name,px, py); // effect title
 
-			g->drawString(name,px, py); // instrument
-			
-			px += fontCharWidth2x + properties.spacing;
-
-			if (muteChannels[j])
-			{
-				PPColor volCol = volColor;
-				volCol.scaleFixed(properties.muteFade);
-				g->setColor(volCol);
-			}
-			else
-				g->setColor(volColor);
-
-			pp_int32 eff, op;
-
-			name[0] = name[1] = '\xf4';
-			name[2] = 0;
-			if (pattern->effnum >= 2)
-			{
-				patternTools->getFirstEffect(eff, op);
-				
-				patternTools->convertEffectsToFT2(eff, op);
-				
-				pp_int32 volume = patternTools->getVolumeFromEffect(eff, op);
-			
-				patternTools->getVolumeName(name, volume);
-			}
-
-			g->drawString(name,px, py);
-			
-			px += fontCharWidth2x + properties.spacing;
-
-			if (muteChannels[j])
-			{
-				PPColor effCol = effColor;
-				effCol.scaleFixed(properties.muteFade);
-				g->setColor(effCol);
-			}
-			else
-				g->setColor(effColor);
-			
-			if (pattern->effnum == 1)
-			{
-				patternTools->getFirstEffect(eff, op);				
-				patternTools->convertEffectsToFT2(eff, op);
-			}
-			else
-			{
-				patternTools->getNextEffect(eff, op);				
-				patternTools->convertEffectsToFT2(eff, op);
-			}
-
-			if (eff == 0 && op == 0)
-			{
-				name[0] = properties.zeroEffectCharacter;
-				name[1] = 0;
-			}
-			else
-			{
-				patternTools->getEffectName(name, eff);
-			}
-
-			g->drawString(name,px, py);
-
-			px += fontCharWidth1x;
-
-			if (muteChannels[j])
-			{
-				PPColor opCol = opColor;
-				opCol.scaleFixed(properties.muteFade);
-				g->setColor(opCol);
-			}
-			else
-				g->setColor(opColor);
-			
-			if (eff == 0 && op == 0)
-			{
-				name[0] = name[1] = properties.zeroEffectCharacter;
-				name[2] = 0;
-			}
-			else
-			{
-				patternTools->convertToHex(name, op, 2);
-			}			
-
-			g->drawString(name,px, py);
+			// px += fontCharWidth1x;
+			//
+			// if (muteChannels[j])
+			// {
+			// 	PPColor opCol = opColor;
+			// 	opCol.scaleFixed(properties.muteFade);
+			// 	g->setColor(opCol);
+			// }
+			// else
+			// 	g->setColor(opColor);
+			//
+			// if (eff == 0 && op == 0)
+			// {
+			// 	name[0] = name[1] = properties.zeroEffectCharacter;
+			// 	name[2] = 0;
+			// }
+			// else
+			// {
+			// 	patternTools->convertToHex(name, op, 2);
+			// }			
+			//
+			// g->drawString(name,px, py); // effect value
 		}
 	}
 	
-	for (j = startPos; j < numVisibleChannels; j++)
+	// for (j = startPos; j < numVisibleChannels; j++)
+	for (j = startPos; j < pattern->rows; j++) // vertical lines
 	{
 
-		pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
-			
+		// pp_int32 px = (location.x + (j-startPos) * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4);
+		pp_int32 px = (location.x + (j-startPos) * (fontCharWidth3x) + SCROLLBARWIDTH) + (fontCharWidth3x + 4);
+		// pp_int32 px = (j-startPos) * fontCharWidth3x + startx; //example
+
 		// columns are already in invisible area => abort
 		if (px >= location.x + size.width)
 			break;
 
-		px += fontCharWidth3x + properties.spacing;
-		px += fontCharWidth2x*3-1 + properties.spacing*2;
-		px += fontCharWidth1x;
+		// px += fontCharWidth3x + properties.spacing;
+		// px += fontCharWidth2x*3-1 + properties.spacing*2;
+		// px += fontCharWidth1x;
 
 		g->setColor(*borderColor);
 		
-		g->drawVLine(location.y, location.y + size.height, px+1);
-		
-		g->setColor(bColor);
-		
 		g->drawVLine(location.y, location.y + size.height, px);
 		
-		g->setColor(dColor);
-		
-		g->drawVLine(location.y, location.y + size.height, px+2);
+		// g->setColor(bColor);
+		//
+		// g->drawVLine(location.y, location.y + size.height, px);
+		//
+		// g->setColor(dColor);
+		//
+		// g->drawVLine(location.y, location.y + size.height, px+2);
 	}
 
 	// ;----------------- Margin lines
@@ -839,7 +856,8 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 	g->setColor(*borderColor);
 		
 	pp_int32 px = location.x + SCROLLBARWIDTH;
-	px+=getRowCountWidth() + 1;
+	// px+=getRowCountWidth() + 1;
+	px+=fontCharWidth3x + 1;
 	g->drawVLine(location.y, location.y + size.height, px+1);
 	
 	g->setColor(bColor);	
@@ -851,7 +869,8 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 	// draw margin horizontal lines
 	for (j = 0; j < visibleWidth / slotSize + 1; j++)
 	{		
-		pp_int32 px = (location.x + j * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4) - 1;
+		// pp_int32 px = (location.x + j * slotSize + SCROLLBARWIDTH) + (getRowCountWidth() + 4) - 1;
+		pp_int32 px = (location.x + j * slotSize + SCROLLBARWIDTH) + (fontCharWidth3x + 4) - 1;
 		
 		// columns are already in invisible area => abort
 		if (px >= location.x + size.width)
@@ -1029,26 +1048,29 @@ void PianoRollControl::adjustExtents()
 void PianoRollControl::adjustVerticalScrollBarPositions(mp_sint32 startIndex)
 {
 	// adjust scrollbar positions
-	if (properties.scrollMode != ScrollModeStayInCenter)
-	{
+	// if (properties.scrollMode != ScrollModeStayInCenter)
+	// {
 		pp_int32 visibleItems = (visibleHeight) / font->getCharHeight();
-		float v = (float)(pattern->rows - visibleItems);
+		// float v = (float)(pattern->rows - visibleItems);
+		float v = (float)(12*8 - visibleItems);
 		vLeftScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
 		vRightScrollbar->setBarPosition((pp_int32)(startIndex*(65536.0f/v)));
-	}
-	else
-	{
-		float v = (float)patternEditor->getCursor().row / (float)(pattern->rows-1);
-		vLeftScrollbar->setBarPosition((pp_int32)(65536.0f*v));
-		vRightScrollbar->setBarPosition((pp_int32)(65536.0f*v));
-	}
+	// }
+	// else
+	// {
+	// 	float v = (float)patternEditor->getCursor().row / (float)(pattern->rows-1);
+	// 	vLeftScrollbar->setBarPosition((pp_int32)(65536.0f*v));
+	// 	vRightScrollbar->setBarPosition((pp_int32)(65536.0f*v));
+	// }
 }
 
 void PianoRollControl::adjustHorizontalScrollBarPositions(mp_sint32 startPos)
 {
-	pp_int32 visibleItems = (visibleWidth) / slotSize;
+	// pp_int32 visibleItems = (visibleWidth) / slotSize;
+	pp_int32 visibleItems = (visibleWidth) / (font->getCharWidth()*3+1);
 
-	float v = (float)(patternEditor->getNumChannels() - visibleItems);
+	// float v = (float)(patternEditor->getNumChannels() - visibleItems);
+	float v = (float)(pattern->rows - visibleItems);
 
 	hTopScrollbar->setBarPosition((pp_int32)(startPos*(65536.0f/v)));
 	hBottomScrollbar->setBarPosition((pp_int32)(startPos*(65536.0f/v)));
@@ -1059,13 +1081,13 @@ void PianoRollControl::adjustScrollBarSizes()
 	float s;
 	if (properties.scrollMode != ScrollModeStayInCenter)
 	{
-		s = (float)(visibleHeight) / (float)(pattern->rows*(font->getCharHeight()));
+		// s = (float)(visibleHeight) / (float)(pattern->rows*(font->getCharHeight()));
+		s = (float)(visibleHeight) / (float)((12*8)*(font->getCharHeight()));
 	}
 	else
 	{
-		//s = (float)(visibleHeight>>1) / (float)((pattern->rows-1)*(font->getCharHeight()));
-		
-		s = 1.0f / (float)pattern->rows;
+		// s = 1.0f / (float)pattern->rows;
+		s = 1.0f / (float)(12*8);
 		if (s > 1.0f)
 			s = 1.0f;
 	}
@@ -1073,7 +1095,8 @@ void PianoRollControl::adjustScrollBarSizes()
 	vLeftScrollbar->setBarSize((pp_int32)(s*65536.0f), false);
 	vRightScrollbar->setBarSize((pp_int32)(s*65536.0f), false);
 
-	s = (float)(visibleWidth) / (float)(patternEditor->getNumChannels()*slotSize);
+	// s = (float)(visibleWidth) / (float)(patternEditor->getNumChannels()*slotSize);
+	s = (float)(visibleWidth) / (float)(pattern->rows*(font->getCharWidth()*3+1));
 	hTopScrollbar->setBarSize((pp_int32)(s*65536.0f), false);
 	hBottomScrollbar->setBarSize((pp_int32)(s*65536.0f), false);
 }
@@ -1146,13 +1169,11 @@ void PianoRollControl::assureCursorVisible(bool row/* = true*/, bool channel/* =
 					else if (cursor.row > startIndex &&
 							 cursor.row + visibleItems < pattern->rows)
 					{
-						//startIndex = cursorPositionRow;
 						startIndex+=(cursor.row-(startIndex+visibleItems));
 					}
 					else if (cursor.row < startIndex &&
 							 cursor.row + visibleItems < pattern->rows)
 					{
-						//startIndex = cursorPositionRow;
 						startIndex+=(cursor.row-startIndex);
 					}
 					else
@@ -1188,36 +1209,69 @@ void PianoRollControl::assureCursorVisible(bool row/* = true*/, bool channel/* =
 	if (channel)
 	{
 		
+		// if (cursor.channel >= 0)
+		// {
+		// 	pp_int32 visibleChannels = ((visibleWidth) / slotSize) - 1;
+		//
+		// 	pp_int32 cursorPos = (cursor.channel-startPos) * slotSize + 
+		// 						 cursorPositions[cursor.inner];
+		//
+		// 	pp_int32 cursorWidth = cursorPositions[cursor.inner+1] - 
+		// 						   cursorPositions[cursor.inner];
+		//
+		// 	if ((startPos <= cursor.channel) && 
+		// 		cursorPos <= visibleWidth - cursorWidth)
+		// 	{
+		// 	}
+		// 	else if (cursor.channel > startPos &&
+		// 		cursorPos < visibleWidth - cursorWidth)
+		// 	{
+		// 		startPos+=(cursor.channel-(startPos+visibleChannels));
+		// 	}
+		// 	else if (cursor.channel < startPos &&
+		// 		cursor.channel + visibleChannels < (signed)patternEditor->getNumChannels())
+		// 	{
+		// 		startPos+=(cursor.channel-startPos);
+		// 	}
+		// 	else
+		// 	{
+		// 		startPos = cursor.channel - visibleChannels;
+		// 		if (startPos < 0)
+		// 			startPos = 0;
+		// 	}
+		//
+		// }
 		if (cursor.channel >= 0)
 		{
-			pp_int32 visibleChannels = ((visibleWidth) / slotSize) - 1;
-			
-			pp_int32 cursorPos = (cursor.channel-startPos) * slotSize + 
-								 cursorPositions[cursor.inner];
-	
-			pp_int32 cursorWidth = cursorPositions[cursor.inner+1] - 
-								   cursorPositions[cursor.inner];
+			// pp_int32 visibleChannels = ((visibleWidth) / slotSize) - 1;
+			// pp_int32 visibleRows = ((visibleWidth) / (font->getCharWidth()*3+1)) - 1;
+			//
+			// pp_int32 cursorPos = (cursor.channel-startPos) * (font->getCharWidth()*3+1)) + 
+			// 					 cursorPositions[cursor.inner];
+			//
+			// pp_int32 cursorWidth = cursorPositions[cursor.inner+1] - 
+			// 					   cursorPositions[cursor.inner];
 
-			if ((startPos <= cursor.channel) && 
-				cursorPos <= visibleWidth - cursorWidth)
-			{
-			}
-			else if (cursor.channel > startPos &&
-				cursorPos < visibleWidth - cursorWidth)
-			{
-				startPos+=(cursor.channel-(startPos+visibleChannels));
-			}
-			else if (cursor.channel < startPos &&
-				cursor.channel + visibleChannels < (signed)patternEditor->getNumChannels())
-			{
-				startPos+=(cursor.channel-startPos);
-			}
-			else
-			{
-				startPos = cursor.channel - visibleChannels;
-				if (startPos < 0)
-					startPos = 0;
-			}
+			// if ((startPos <= cursor.channel) && 
+			// 	cursorPos <= visibleWidth - cursorWidth)
+			// {
+			// }
+			// else if (cursor.channel > startPos &&
+			// 	cursorPos < visibleWidth - cursorWidth)
+			// {
+			// 	startPos+=(cursor.channel-(startPos+visibleChannels));
+			// }
+			// else if (cursor.channel < startPos &&
+			// 	cursor.channel + visibleChannels < (signed)patternEditor->getNumChannels())
+			// {
+			// 	startPos+=(cursor.channel-startPos);
+			// }
+			// else
+			// {
+			// 	startPos = cursor.channel - visibleChannels;
+			// 	if (startPos < 0)
+			// 		startPos = 0;
+			// }
 			
 		}
 
@@ -1246,13 +1300,6 @@ void PianoRollControl::advanceRow(bool assureCursor/* = true*/, bool repaint/* =
 	if (!properties.rowAdvance)
 		return;
 
-	/*if (cursor.row + rowInsertAdd < pattern->rows - 1)
-	{
-		cursor.row+=rowInsertAdd;
-	}
-	else
-		cursor.row = pattern->rows - 1;*/
-	
 	PatternEditorTools::Position& cursor = patternEditor->getCursor();
 										
 	cursor.row = (cursor.row + properties.rowInsertAdd)/* % pattern->rows*/;
@@ -1355,25 +1402,37 @@ void PianoRollControl::validate()
 	
 	if (properties.scrollMode != ScrollModeStayInCenter)
 	{
-		if (startIndex + visibleItems > pattern->rows)
+		// if (startIndex + visibleItems > pattern->rows)
+		// {
+		// 	startIndex-=(startIndex + visibleItems)-pattern->rows;
+		// }
+
+		if (startIndex + visibleItems > (12*8))
 		{
-			startIndex-=(startIndex + visibleItems)-pattern->rows;
+			startIndex-=(startIndex + visibleItems)-(12*8);
 		}
 		
 		if (startIndex < 0)
 			startIndex = 0;
 	}
 
-	pp_int32 visibleChannels = (visibleWidth) / slotSize;
-	if (startPos + visibleChannels > patternEditor->getNumChannels())
+	// pp_int32 visibleChannels = (visibleWidth) / slotSize;
+	// if (startPos + visibleChannels > patternEditor->getNumChannels())
+	// {
+	// 	startPos-=(startPos + visibleChannels)-patternEditor->getNumChannels();
+	// }
+
+	pp_int32 visibleRows = (visibleWidth) / (font->getCharWidth()*3+1);
+	if (startPos + visibleRows > pattern->rows)
 	{
-		startPos-=(startPos + visibleChannels)-patternEditor->getNumChannels();
+		startPos-=(startPos + visibleRows)-pattern->rows;
 	}
 
 	if (startPos < 0)
 		startPos = 0;
 
 	// validate selection
+	// --------- OLD CODE ----------
 	/*flattenSelection();
 
 	if ((selectionStart.channel >= 0 && selectionStart.channel > numVisibleChannels-1) || 
@@ -1388,6 +1447,7 @@ void PianoRollControl::validate()
 	
 	if (selectionEnd.row >= 0 && selectionEnd.row > pattern->rows-1)
 		selectionEnd.row = pattern->rows-1;*/
+	// --------- OLD CODE ----------
 }
 
 bool PianoRollControl::hasValidSelection() const
