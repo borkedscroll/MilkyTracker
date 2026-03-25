@@ -449,6 +449,13 @@ pp_int32 SectionPianoRoll::handleEvent(PPObject* sender, PPEvent* event)
 				realUpdate(true, true, false);
 				break;
 			}
+
+			case PATTERN_EDITOR:
+			{
+				// redraw sample editor
+				realUpdate(true, true, false);
+				break;
+			}
 		}
 	}
 	else if (event->getID() == eLMouseDown)
