@@ -45,6 +45,7 @@
 
 #include "InputControlListener.h"
 #include "SectionInstruments.h"
+#include "SectionPianoRoll.h"
 #include "SectionTranspose.h"
 #include "SectionDiskMenu.h"
 
@@ -275,6 +276,7 @@ processBindings:
 				pp_int32 note = patternEditorControl->ScanCodeToNote(scanCode);				
 				
 				recorderLogic->sendNoteUpToPatternEditor(event, note, patternEditorControl);	
+				sectionPianoRoll->realUpdate(true,true,false);
 			}
 		}
 	}

@@ -1556,7 +1556,6 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 		pp_int32 row = patternEditorControl->getCurrentRow();
 
 		bool isPlaying = playerController->isPlaying() && !playerController->isPlayingRowOnly();
-
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
 			// The pattern editor sends PPEvent::eUpated when the cursor has been moved
@@ -1730,6 +1729,7 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 							isEditingCurrentOrderlistPattern())
 							updateSongRow();
 						else backtraceInstrument(0,true);
+						sectionPianoRoll->realUpdate(true,true,false);
 						break;
 					}
 

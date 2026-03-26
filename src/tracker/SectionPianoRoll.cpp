@@ -449,6 +449,13 @@ pp_int32 SectionPianoRoll::handleEvent(PPObject* sender, PPEvent* event)
 				realUpdate(true, true, false);
 				break;
 			}
+
+			case PATTERN_EDITOR:
+			{
+				// redraw sample editor
+				realUpdate(true, true, false);
+				break;
+			}
 		}
 	}
 	else if (event->getID() == eLMouseDown)
@@ -456,12 +463,12 @@ pp_int32 SectionPianoRoll::handleEvent(PPObject* sender, PPEvent* event)
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
 			// Play sample preview from offset position
-			case SAMPLE_EDITOR:
-			{
-				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
-				samplePlayer.playCurrentSampleFromOffset(event->getMetaData(), currentSamplePlayNote);
-				break;
-			}
+			// case SAMPLE_EDITOR:
+			// {
+			// 	SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
+			// 	samplePlayer.playCurrentSampleFromOffset(event->getMetaData(), currentSamplePlayNote);
+			// 	break;
+			// }
 		}
 	}
 	else if (event->getID() == eLMouseUp)
@@ -1297,6 +1304,7 @@ void SectionPianoRoll::realUpdate(bool repaint, bool force, bool reAttach)
 	screen->paintControl(container3, false);
 	screen->paintControl(sampleEditorControl, false);
 	screen->paintControl(pianoRollControl, false);
+	screen->paintControl(tracker.getPatternEditorControl(), false);
 	if (repaint)
 		screen->update();		
 }
@@ -1305,6 +1313,7 @@ void SectionPianoRoll::updateSampleWindow(bool repaint/* = true*/)
 {
 	PPScreen* screen = tracker.screen;
 	// screen->paintControl(sampleEditorControl, false);
+	screen->paintControl(pianoRollControl, false);
 	if (repaint)
 		screen->update();		
 }
