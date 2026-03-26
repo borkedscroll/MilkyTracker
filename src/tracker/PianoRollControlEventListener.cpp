@@ -29,6 +29,8 @@
  */
 
 #include "PianoRollControl.h"
+#include "Tracker.h"
+#include "PlayerController.h"
 #include "Event.h"
 #include "Screen.h"
 #include "Font.h"
@@ -212,7 +214,7 @@ pp_int32 PianoRollControl::dispatchEvent(PPEvent* event)
 					if (newStartPos + startPos < 0)
 						break;
 
-					preCursor.channel = 0;
+					// preCursor.channel = 0;
 					preCursor.row = newStartPos + startPos;
 					if (properties.advancedDnd) {
 						preCursor.inner = 0;
@@ -549,7 +551,7 @@ unmuteAll:
 						break;
 
 					// preCursor.channel = newStartPos + startPos;
-					preCursor.channel = 0;
+					// preCursor.channel = 0;
 					preCursor.row = newStartPos + startPos;
 					if (properties.advancedDnd) {
 						preCursor.inner = 0;
@@ -643,7 +645,11 @@ unmuteAll:
 				ppreCursor = &preCursor;
 				patternEditor->setCursor(*ppreCursor);
 				patternEditor->writeNote((12*8 - currentNote), true, NULL);
-
+				pp_int32 newIns = patternEditor->getCurrentActiveInstrument();
+				// play it
+				// tracker.playerLogic->playNote(*tracker.playerController, (mp_ubyte)(0), (12*8-currenNote),
+											  // (mp_ubyte)newIns, -1);
+				// playerController->playNote(0, (12*8-currentNote), newIns, -1);
 				// parentScreen->paintControl(this);
 				parentScreen->paintControl(this);
 				notifyUpdate();

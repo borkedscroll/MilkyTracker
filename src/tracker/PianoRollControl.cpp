@@ -699,7 +699,8 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 			}
 
 			// patternTools->setPosition(pattern, j, row);
-			patternTools->setPosition(pattern, 0, j);
+			// printf("current channel %d\n", cursor.channel);
+			patternTools->setPosition(pattern, cursor.channel, j);
 
 			PPColor noteCol = noteColor;
 

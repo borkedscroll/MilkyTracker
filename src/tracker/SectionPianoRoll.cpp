@@ -463,12 +463,12 @@ pp_int32 SectionPianoRoll::handleEvent(PPObject* sender, PPEvent* event)
 		switch (reinterpret_cast<PPControl*>(sender)->getID())
 		{
 			// Play sample preview from offset position
-			case SAMPLE_EDITOR:
-			{
-				SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
-				samplePlayer.playCurrentSampleFromOffset(event->getMetaData(), currentSamplePlayNote);
-				break;
-			}
+			// case SAMPLE_EDITOR:
+			// {
+			// 	SamplePlayer samplePlayer(*moduleEditor, *tracker.playerController);
+			// 	samplePlayer.playCurrentSampleFromOffset(event->getMetaData(), currentSamplePlayNote);
+			// 	break;
+			// }
 		}
 	}
 	else if (event->getID() == eLMouseUp)
