@@ -663,7 +663,7 @@ unmuteAll:
 			if (caughtControl && !controlCaughtByLMouseButton && !controlCaughtByRMouseButton)
 			{
 				caughtControl->dispatchEvent(event);
-				caughtControl = NULL;			
+				caughtControl = NULL;
 				break;
 			}
 			
@@ -725,9 +725,9 @@ unmuteAll:
 			if (!moveSelection && !startSelection)
 				break;
 			
-			hasDragged = true;
-			goto markOrMoveSelection;
-			//break;
+			// hasDragged = true;
+			// goto markOrMoveSelection;
+			break;
 		}
 
 		case eRMouseDrag:
@@ -1055,7 +1055,7 @@ markOrMoveSelection:
 					!keyboardStartSelection && 
 					!keyboadStartSelectionFlipped)
 				{
-					patternEditor->getSelection().end = patternEditor->getCursor();
+					// patternEditor->getSelection().end = patternEditor->getCursor();
 				}
 				else if (::getKeyModifier() == (KeyModifierALT|KeyModifierSHIFT) &&
 						 patternEditor->getSelection().start.isValid())

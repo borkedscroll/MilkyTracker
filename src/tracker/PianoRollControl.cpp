@@ -861,10 +861,10 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 		pp_int32 secondarySpacing = 8;
 		if (!(j % primarySpacing)){
 			g->setColor(hiLightPrimaryRow);
-			g->drawVLine(location.y, location.y + size.height, px+1);
+			g->drawVLine(location.y, location.y + size.height, px-1);
 		} else if (!(j % secondarySpacing)) {
 			g->setColor(hiLightSecondaryRow);
-			g->drawVLine(location.y, location.y + size.height, px+1);
+			g->drawVLine(location.y, location.y + size.height, px-1);
 		} else {
 			g->setColor(PPColor(30,30,30));
 		}
@@ -878,7 +878,7 @@ void PianoRollControl::paint(PPGraphicsAbstract* g)
 		// 		g->drawHLine(startx - (getRowCountWidth() + 4), startx+visibleWidth, py + k);
 		// }
 		
-		g->drawVLine(location.y, location.y + size.height, px);
+		g->drawVLine(location.y, location.y + size.height, px-2);
 		
 		// g->setColor(bColor);
 		//
