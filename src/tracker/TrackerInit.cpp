@@ -41,6 +41,7 @@
 #include "TabHeaderControl.h"
 #include "TitlePageManager.h"
 #include "TrackerSettingsDatabase.h"
+#include "ContextMenu.h"
 
 // Sections
 #include "SectionSwitcher.h"
@@ -255,12 +256,118 @@ void Tracker::initUI()
 
 	initInputContainerDefault(0, screen->getHeight()-UPPERSECTIONDEFAULTHEIGHT()-INPUTCONTAINERHEIGHT_DEFAULT);
 	initInputContainerExtended(0, screen->getHeight()-UPPERSECTIONDEFAULTHEIGHT()-INPUTCONTAINERHEIGHT_EXTENDED);
-#else
-	PPContainer* containerAbout = new PPContainer(CONTAINER_ABOUT, screen, this, PPPoint(isClassic ? 116-2 : 0, 0), PPSize((306-116+2)+14+(isClassic?0:114),24), false);
+#else // large resolution start
+// 306-116+2)+14+(isClassic?0:114)
+	PPContainer* containerMenuBar = new PPContainer(CONTAINER_MENUBAR, screen, this, PPPoint(0, 0), PPSize(114+206, 12));
+	containerMenuBar->setColor(TrackerConfig::colorThemeMain);
+
+	pp_int32 px = 0;
+	pp_int32 px_width = 32;
+	button = new PPButton(BUTTON_MENUBAR_FILE, screen, this, PPPoint(px, 0), PPSize(px_width, 12), false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("File");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerMenuBar->addControl(button);
+	px += px_width;
+
+	button = new PPButton(BUTTON_MENUBAR_EDIT, screen, this, PPPoint(px, 0), PPSize(px_width, 12), false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Edit");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerMenuBar->addControl(button);
+	px += px_width;
+
+	button = new PPButton(BUTTON_MENUBAR_VIEW, screen, this, PPPoint(px, 0), PPSize(px_width, 12), false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("View");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerMenuBar->addControl(button);
+	px += px_width;
+
+	button = new PPButton(BUTTON_MENUBAR_HELP, screen, this, PPPoint(px, 0), PPSize(px_width, 12), false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("Help");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerMenuBar->addControl(button);
+
+	button = new PPButton(MAINMENU_PLAY_SONG, screen, this, PPPoint(114+206 - px_width*4, 0), PPSize(px_width, 12), false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
+	button->setText("\x10");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerMenuBar->addControl(button);
+
+	button = new PPButton(MAINMENU_STOP, screen, this, PPPoint(114+206 - px_width*3, 0), PPSize(px_width, 12), false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_SYSTEM));
+	button->setText("\xa7");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerMenuBar->addControl(button);
+
+	button = new PPButton(MAINMENU_PLAY_PATTERN, screen, this, PPPoint(114+206 - px_width*2, 0), PPSize(px_width, 12), false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("PAT");
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
+	containerMenuBar->addControl(button);
+
+	button = new PPButton(MAINMENU_EDIT, screen, this, PPPoint(114+206 - px_width*1, 0), PPSize(px_width, 12), false,true,false);
+	button->setColor(TrackerConfig::colorThemeMain);
+	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText));
+	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
+	button->setText("REC");
+	containerMenuBar->addControl(button);
+
+
+	// context menus
+	// editMenuControl->setLocation(PPPoint(0,0));
+	px = 0;
+
+	fileContextMenu = new PPContextMenu(CONTEXT_MENUBAR_FILE, screen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
+    fileContextMenu->addEntry("Load Song", MAINMENU_LOAD);
+    fileContextMenu->addEntry("Save", MAINMENU_SAVE);
+    fileContextMenu->addEntry("Save As", MAINMENU_SAVEAS);
+    fileContextMenu->addEntry("Disk Op.", MAINMENU_DISKMENU);
+	fileContextMenu->setLocation(PPPoint(1+px,12));
+	px += px_width;
+
+	editContextMenu = new PPContextMenu(CONTEXT_MENUBAR_EDIT, screen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
+	editContextMenu->addEntry("Zap", MAINMENU_ZAP);
+	editContextMenu->addEntry("Optimize", MAINMENU_OPTIMIZE);
+	editContextMenu->addEntry("Transpose", MAINMENU_TRANSPOSE);
+	editContextMenu->addEntry("Adv. Edit", MAINMENU_ADVEDIT);
+	editContextMenu->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+	editContextMenu->addEntry("Add Channels", BUTTON_MENU_ITEM_ADDCHANNELS);
+	editContextMenu->addEntry("Remove Channels", BUTTON_MENU_ITEM_SUBCHANNELS);
+	editContextMenu->addEntry("\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4", -1);
+	editContextMenu->addEntry("Quick Opt.", MAINMENU_QUICKOPTIONS);
+	editContextMenu->addEntry("Config", MAINMENU_CONFIG);
+	editContextMenu->setLocation(PPPoint(1+px,12));
+	px += px_width;
+
+	viewContextMenu = new PPContextMenu(CONTEXT_MENUBAR_VIEW, screen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
+    viewContextMenu->addEntry("Sample Editor", MAINMENU_SMPEDIT);
+    viewContextMenu->addEntry("Instrument Editor", MAINMENU_INSEDIT);
+    viewContextMenu->addEntry("Piano Roll", MAINMENU_PIANO_ROLL);
+	viewContextMenu->setLocation(PPPoint(1+px,12));
+	px += px_width;
+
+	helpContextMenu = new PPContextMenu(CONTEXT_MENUBAR_HELP, screen, this, PPPoint(0,0), TrackerConfig::colorPatternEditorCursorLine, false, PPFont::getFont(PPFont::FONT_SYSTEM));
+    helpContextMenu->addEntry("About", MAINMENU_ABOUT);
+    helpContextMenu->addEntry("Help", MAINMENU_HELP);
+	helpContextMenu->setLocation(PPPoint(1+px,12));
+
+	// PPContainer* containerAbout = new PPContainer(CONTAINER_ABOUT, screen, this, PPPoint(isClassic ? 116-2 : 0, 0), PPSize((306-116+2)+14+(isClassic?0:114),24), false);
+	PPContainer* containerAbout = new PPContainer(CONTAINER_ABOUT, screen, this, PPPoint(isClassic ? 116-2 : 0, 12), PPSize((306-116+2)+14+(isClassic?0:114),24), false);
 	containerAbout->setColor(TrackerConfig::colorThemeMain);
 
 	// Song title edit field
-	PPListBox* listBox = new PPListBox(LISTBOX_SONGTITLE, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12), true, true, false);
+	// PPListBox* listBox = new PPListBox(LISTBOX_SONGTITLE, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12), true, true, false);
+	PPListBox* listBox = new PPListBox(LISTBOX_SONGTITLE, screen, this, PPPoint(116-2+2, 2+8+12), PPSize(200+2,12), true, true, false);
 	listBox->showSelection(false);
 	listBox->setSingleButtonClickEdit(true);
 	listBox->setBorderColor(TrackerConfig::colorThemeMain);
@@ -273,49 +380,53 @@ void Tracker::initUI()
 
 	containerAbout->addControl(listBox);
 	
-	PPStaticText* staticText = playTimeText = new PPStaticText(STATICTEXT_ABOUT_TIME, screen, this, PPPoint(116+2, 2+8+3), "", false);
+	// PPStaticText* staticText = playTimeText = new PPStaticText(STATICTEXT_ABOUT_TIME, screen, this, PPPoint(116+2, 2+8+3), "", false);
+	PPStaticText* staticText = playTimeText = new PPStaticText(STATICTEXT_ABOUT_TIME, screen, this, PPPoint(116+2, 2+8+3+12), "", false);
 	containerAbout->addControl(staticText);
 
-	button = new PPButton(BUTTON_ABOUT_ESTIMATESONGLENGTH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - 6*8-4, 2+8+2), PPSize(6*8, 9));
+	// button = new PPButton(BUTTON_ABOUT_ESTIMATESONGLENGTH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - 6*8-4, 2+8+2), PPSize(6*8, 9));
+	button = new PPButton(BUTTON_ABOUT_ESTIMATESONGLENGTH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - 6*8-4, 2+8+2+12), PPSize(6*8, 9));
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("estimate");
 	containerAbout->addControl(button);
 
-	peakLevelControl = new PeakLevelControl(PEAKLEVEL_CONTROL, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12));
+	// peakLevelControl = new PeakLevelControl(PEAKLEVEL_CONTROL, screen, this, PPPoint(116-2+2, 2+8), PPSize(200+2,12));
+	peakLevelControl = new PeakLevelControl(PEAKLEVEL_CONTROL, screen, this, PPPoint(116-2+2, 2+8+12), PPSize(200+2,12));
 	peakLevelControl->setBorderColor(TrackerConfig::colorThemeMain);
 	containerAbout->addControl(peakLevelControl);
 
-	staticText = new PPStaticText(STATICTEXT_ABOUT_HEADING, screen, this, PPPoint(116, 3), "Song title:", true);
+	// staticText = new PPStaticText(STATICTEXT_ABOUT_HEADING, screen, this, PPPoint(116, 3), "Song title:", true);
+	staticText = new PPStaticText(STATICTEXT_ABOUT_HEADING, screen, this, PPPoint(116, 3+12), "Song title:", true);
 	staticText->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	containerAbout->addControl(staticText);
 
 	// switch to Peak level
 	pp_int32 aboutButtonOffset = 51;
 
-	button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(12, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1+12), PPSize(12, 9), false, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("F");
 	containerAbout->addControl(button);
 
-	button = new PPButton(BUTTON_ABOUT_PROSPECTIVE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12, 1), PPSize(12, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_PROSPECTIVE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12, 1+12), PPSize(12, 9), false, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("P");
 	button->setPressed(true);
 	containerAbout->addControl(button);
 
-	button = new PPButton(BUTTON_ABOUT_WRAPCURSOR, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*2, 1), PPSize(12, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_WRAPCURSOR, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*2, 1+12), PPSize(12, 9), false, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("W");
 	containerAbout->addControl(button);
 
-	button = new PPButton(BUTTON_ABOUT_LIVESWITCH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*3, 1), PPSize(12, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_LIVESWITCH, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset + 12*3, 1+12), PPSize(12, 9), false, true, false);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("L");
 	containerAbout->addControl(button);
 
 	aboutButtonOffset+=34;
 
-	button = new PPButton(BUTTON_ABOUT_SHOWPEAK, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_SHOWPEAK, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1+12), PPSize(30, 9), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Peak");
@@ -324,7 +435,7 @@ void Tracker::initUI()
 
 	aboutButtonOffset+=30;
 
-	button = new PPButton(BUTTON_ABOUT_SHOWTIME, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_SHOWTIME, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1+12), PPSize(30, 9), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Time");
@@ -333,24 +444,29 @@ void Tracker::initUI()
 
 	aboutButtonOffset+=30;
 
-	button = new PPButton(BUTTON_ABOUT_SHOWTITLE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1), PPSize(30, 9), false, true, false);
+	button = new PPButton(BUTTON_ABOUT_SHOWTITLE, screen, this, PPPoint(containerAbout->getLocation().x + containerAbout->getSize().width - aboutButtonOffset, 1+12), PPSize(30, 9), false, true, false);
 	button->setColor(TrackerConfig::colorThemeMain);
 	button->setFont(PPFont::getFont(PPFont::FONT_TINY));
 	button->setText("Title");
 	button->setTextColor(PPUIConfig::getInstance()->getColor(PPUIConfig::ColorStaticText));
 	containerAbout->addControl(button);
 
+	screen->addControl(containerMenuBar);
 	screen->addControl(containerAbout);
 
 	// small sections
-	initSectionOrderlist(0, isClassic ? 0 : 24, 116-2, 64+64-10);
+	// initSectionOrderlist(0, isClassic ? 0 : 24, 116-2, 64+64-10);
+	initSectionOrderlist(0, isClassic ? 12 : 24, 116-2, 64+64-10-12);
 
-	initSectionSpeed(116-2, 24);
+	// initSectionSpeed(116-2, 24);
+	initSectionSpeed(116-2, 24+12);
 
-	initSectionPattern(116-4+99, 24 );
+	// initSectionPattern(116-4+99, 24);
+	initSectionPattern(116-4+99, 24+12 );
 
 	// Main options
-	initSectionMainOptions(0+116-2, isClassic ? 64 : 88);
+	// initSectionMainOptions(0+116-2, isClassic ? 64 : 88);
+	initSectionMainOptions(116-2, 64+12);
 
 	// ---------- Instrument & Sample listboxes ---------- 
 	initListboxesSection(320, 0);
@@ -759,10 +875,10 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 
 #ifndef __LOWRES__
 	pp_int32 bHeight = 12;
-	PPSize size(320, 54);
+	PPSize size(320, 54/2);
 #else
 	pp_int32 bHeight = 14;
-	PPSize size(320, 64);
+	PPSize size(320, 64/2);
 #endif
 
 	PPContainer* container = new PPContainer(CONTAINER_MENU, screen, this, PPPoint(x, y), size, false);
@@ -803,136 +919,8 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	button->setText("Rec");
 	
 	container->addControl(button);
-
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_ZAP))->setText("Zap");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText("Load");
-	// Setup "Save" button
-	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_SAVE));
-	button->setText("Save");
-	button->setSize(PPSize(77>>1, bHeight-1));
-	// Add "Save As" button
-	button = new PPButton(MAINMENU_SAVEAS, screen, this, 
-						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
-						PPSize(77>>1, bHeight-1));
 	
-	button->setText("As" PPSTR_PERIODS);
-	
-	container->addControl(button);
-	
-	//static_cast<PPButton*>(container->getControlByID(MAINMENU_SAVE));
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_DISKMENU))->setText("Disk Op.");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("Ins. Ed.");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("Smp. Ed.");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_ADVEDIT))->setText("Adv. Edit");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_TRANSPOSE))->setText("Transpose");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText("Config");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_QUICKOPTIONS))->setText("Options");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_OPTIMIZE))->setText("Optimize");
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_ABOUT))->setText("About");
-
-	// add/subtract channels
-	button = new PPButton(BUTTON_MENU_ITEM_ADDCHANNELS, screen, this, PPPoint(x+4 + 3*78, y + 3 + 3*bHeight), PPSize((77>>1) - 1, bHeight-1));
-	button->setText("Add");
-	container->addControl(button);
-
-	button = new PPButton(BUTTON_MENU_ITEM_SUBCHANNELS, screen, this, PPPoint(x+4 + 3*78 + (77>>1), y + 3 + 3*bHeight), PPSize((77>>1)+1, bHeight-1));
-	button->setText("Sub");
-	container->addControl(button);
-
-	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN));
-	button->setText("Pat");
-	button->setSize(PPSize((77>>1)-1, bHeight-1));
-
-	PPPoint p = button->getLocation();
-	p.x+=button->getSize().width+1;
-	
-	button = new PPButton(MAINMENU_PLAY_POSITION, screen, this, p, PPSize((77>>1)+1, bHeight-1));
-	button->setText("Pos");
-	container->addControl(button);
-
-	if( !screen->getClassic() ){
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_DISKMENU))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_ADVEDIT))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_TRANSPOSE))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_QUICKOPTIONS))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_OPTIMIZE))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_ABOUT))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_ZAP))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_SAVE))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_SAVEAS))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_POSITION))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(BUTTON_MENU_ITEM_ADDCHANNELS))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(BUTTON_MENU_ITEM_SUBCHANNELS))->hide(true);
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("\x10");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("\x10|");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP))->setText("\xa7");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_LOAD))->setText(   "file");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT))->setText(   "\x07");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_CONFIG))->setText( "config");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setText("instr");
-		static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setText("sample");
-		// extra follow button to transportbar
-		button = new PPButton(BUTTON_ABOUT_FOLLOWSONG, screen, this, PPPoint(0,0), PPSize(12, 9));
-		button->setText("\x19");
-		container->addControl(button);
-		// static_cast<PPButton*>(container->getControlByID(MAINMENU_INSEDIT))->setColor(TrackerConfig::colorHighLight_1);
-		// static_cast<PPButton*>(container->getControlByID(MAINMENU_SMPEDIT))->setColor(TrackerConfig::colorHighLight_1);
-
-		button = new PPButton(MAINMENU_HELP, screen, this, p, PPSize((77>>1)+1, bHeight-1));
-		button->setText("Help");
-		// button->setSize( btn->getSize() );
-		// button->setLocation( PPPoint( btn->getLocation().x + btn->getSize().width, btn->getLocation().y ) );
-		button->setFont( PPFont::getFont(PPFont::FONT_TINY) );
-		container->addControl(button);
-
-		pp_int32 i = 0;
-		PPButton *btn;
-		pp_int32 btnID = 0;
-		pp_int32 x = 1;
-		pp_uint32 btns_transport[10] = { 
-			BUTTON_ABOUT_FOLLOWSONG,
-			MAINMENU_PLAY_SONG,
-			MAINMENU_PLAY_PATTERN,
-			MAINMENU_STOP,
-			MAINMENU_EDIT,
-			MAINMENU_LOAD,
-			MAINMENU_INSEDIT,
-			MAINMENU_SMPEDIT,
-			MAINMENU_CONFIG,
-			MAINMENU_HELP
-		};
-
-
-		for( i = 0; i < 10; i++ ){
-			btnID = btns_transport[i];
-			btn = static_cast<PPButton*>(container->getControlByID(  btnID ));
-			PPSize size    = btn->getSize();
-			PPPoint loc = btn->getLocation();
-			size.width  = 29;
-			size.height = i < 8 ? 28 : 14;
-			loc.y = 88;
-			loc.x = x;
-			if( btnID == BUTTON_ABOUT_FOLLOWSONG ) size.width =  14;
-			if( btnID == MAINMENU_INSEDIT        ) size.width += 23;
-			if( btnID == MAINMENU_EDIT           ) size.width =  14;
-			if( btnID == MAINMENU_SMPEDIT        ) size.width += 31;
-			if( btnID == MAINMENU_LOAD           ) size.width += 15;
-			if( btnID == MAINMENU_CONFIG         ) size.width += 10;
-			if( btnID == MAINMENU_HELP           ){
-				size.width += 10;
-				loc.x -= size.width+1;
-				loc.y += size.height;
-			}
-			btn->setSize( size );
-			btn->setLocation( loc );
-			if( i > 0 && i < 4 ) btn->setColor(TrackerConfig::colorHighLight_1);
-			if( btnID == MAINMENU_CONFIG || btnID == MAINMENU_HELP ) 
-				btn->setFont( PPFont::getFont(PPFont::FONT_TINY) );
-			x += (size.width+1);
-		}
-	} // end of !classic
-
-	screen->addControl(container);	
+	screen->addControl(container);
 }
 
 void Tracker::initListboxesSection(pp_int32 x, pp_int32 y)

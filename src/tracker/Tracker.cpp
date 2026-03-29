@@ -145,6 +145,7 @@ Tracker::Tracker() :
 	caughtMouseInUpperLeftCorner(false), 
 	useClassicBrowser(false),
 	savePanel(NULL),
+	isPlaying(false),
 	fileSystemChangedListener(NULL)
 {
 	resetStateMemories();
@@ -366,6 +367,7 @@ void Tracker::setNumChannels(pp_int32 numChannels, bool repaint/* = true*/)
 
 void Tracker::showSongSettings(bool show)
 {
+	screen->getControlByID(CONTAINER_MENUBAR)->show(show);
 	screen->getControlByID(CONTAINER_ABOUT)->show(show);
 	screen->getControlByID(CONTAINER_ORDERLIST)->show(show);
 	screen->getControlByID(CONTAINER_SPEED)->show(show);
@@ -374,7 +376,7 @@ void Tracker::showSongSettings(bool show)
 
 void Tracker::showMainOptions(bool show)
 {
-	screen->getControlByID(CONTAINER_MENU)->show(show);	
+	// screen->getControlByID(CONTAINER_MENU)->show(show);
 }
 
 void Tracker::showMainMenu(bool show, bool showInstrumentSelector)
@@ -586,7 +588,181 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 				eventKeyDownBinding_InvokeSectionHDRecorder();
 				break;
 			}*/
-			
+			case BUTTON_MENUBAR_FILE:
+			{
+				screen->setContextMenuControl(fileContextMenu);
+				break;
+			}
+			case BUTTON_MENUBAR_EDIT:
+			{
+				screen->setContextMenuControl(editContextMenu);
+				break;
+			}
+			case BUTTON_MENUBAR_VIEW:
+			{
+				screen->setContextMenuControl(viewContextMenu);
+				break;
+			}
+			case BUTTON_MENUBAR_HELP:
+			{
+				screen->setContextMenuControl(helpContextMenu);
+				break;
+			}
+
+			case CONTEXT_MENUBAR_FILE: {
+				switch(*((pp_int32*)event->getDataPtr())){
+					case MAINMENU_LOAD: // open song
+					{
+						if (event->getID() != eCommand)
+							break;
+						
+						eventKeyDownBinding_Open();
+						break;
+					}
+					case MAINMENU_SAVE:
+					{
+						if (event->getID() != eCommand)
+							break;
+
+						eventKeyDownBinding_Save();
+						break;
+					}
+					case MAINMENU_SAVEAS:
+					{
+						if (event->getID() != eCommand)
+							break;
+
+						eventKeyDownBinding_SaveAs();
+						break;
+					}
+					case MAINMENU_DISKMENU: // disk op
+					{
+						if (event->getID() != eCommand)
+							break;
+						
+						eventKeyDownBinding_InvokeSectionDiskMenu();
+						break;
+					}
+				}
+				break;
+			}
+			case CONTEXT_MENUBAR_EDIT: {
+				switch(*((pp_int32*)event->getDataPtr())) {
+					case MAINMENU_ZAP: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						if (dialog) {
+							delete dialog;
+						}
+						if (responder) {
+							delete responder;
+						}
+						responder = new ZapHandler(Zapper(*this));				
+						dialog = new DialogZap(screen, responder, PP_DEFAULT_ID);	
+						dialog->show();
+						break;
+					}
+					case MAINMENU_OPTIMIZE: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionOptimize();
+						break;
+					}
+					case MAINMENU_TRANSPOSE: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionTranspose();
+						break;
+					}
+					case MAINMENU_ADVEDIT: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionAdvancedEdit();
+						break;
+					}
+					case BUTTON_MENU_ITEM_ADDCHANNELS: {
+						mp_sint32 numChannels = moduleEditor->getNumChannels() + 2;
+						if (numChannels > TrackerConfig::numPlayerChannels) {
+							numChannels = TrackerConfig::numPlayerChannels;
+						}
+						setModuleNumChannels(numChannels);
+						break;
+					}
+					case BUTTON_MENU_ITEM_SUBCHANNELS: {
+						// mp_sint32 numChannels = moduleEditor->getNumChannels() + 
+						// 						(reinterpret_cast<PPControl*>(sender)->getID() == BUTTON_MENU_ITEM_ADDCHANNELS ? 2 : -2);
+						mp_sint32 numChannels = moduleEditor->getNumChannels() - 2;
+						if (numChannels < 2) {
+							numChannels = 2;
+						}
+						setModuleNumChannels(numChannels);
+						break;
+					}
+					case MAINMENU_QUICKOPTIONS: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionQuickOptions();
+						break;
+					}
+					case MAINMENU_CONFIG: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionSettings();
+						break;
+					}
+				}
+				break;
+			}
+			case CONTEXT_MENUBAR_VIEW: {
+				switch(*((pp_int32*)event->getDataPtr())) {
+					case MAINMENU_SMPEDIT: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						// eventKeyDownBinding_InvokeSectionPianoRoll();
+						eventKeyDownBinding_InvokeSectionSamples();
+						break;
+					}
+					case MAINMENU_INSEDIT: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionInstruments();
+						break;
+					}
+					case MAINMENU_PIANO_ROLL: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionPianoRoll();
+						break;
+					}
+				}
+				break;
+			}
+			case CONTEXT_MENUBAR_HELP: {
+				switch(*((pp_int32*)event->getDataPtr())) {
+					case MAINMENU_ABOUT: {
+						if (event->getID() != eCommand) {
+							break;
+						}
+						eventKeyDownBinding_InvokeSectionAbout();
+						break;
+					}
+					case MAINMENU_HELP: {
+						eventKeyDownBinding_InvokeHelp();
+						break;
+					}
+				}
+				break;
+			}
+
 			case BUTTON_INSTRUMENT:
 			{
 				if (event->getID() != eCommand)
@@ -750,19 +926,28 @@ pp_int32 Tracker::handleEvent(PPObject* sender, PPEvent* event)
 			}
 			
 			case MAINMENU_PLAY_SONG:
-				playerLogic->playSong();
+				// playerLogic->playSong();
+				isPlaying = !isPlaying;
+				if(isPlaying) {
+					playerLogic->playSong();
+				} else {
+					playerLogic->stopSong();
+				}
 				break;
 
 			case MAINMENU_PLAY_PATTERN:
 				playerLogic->playPattern();
+				isPlaying = true;
 				break;
 
 			case MAINMENU_PLAY_POSITION:
 				playerLogic->playPosition();
+				isPlaying = true;
 				break;
 
 			case MAINMENU_STOP:
 				playerLogic->stopSong();
+				isPlaying = false;
 				break;
 
 			case MAINMENU_HELP:

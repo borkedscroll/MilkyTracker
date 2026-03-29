@@ -54,7 +54,8 @@
 
 void Tracker::updateAboutToggleButton(pp_int32 id, bool b, bool repaint/* = true*/)
 {
-  pp_int32 btns[2] = { CONTAINER_ABOUT, CONTAINER_MENU };
+  // pp_int32 btns[2] = { CONTAINER_ABOUT, CONTAINER_MENU };
+  pp_int32 btns[1] = { CONTAINER_ABOUT };
   for( int i = 0; i < 2; i++ ){
     PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(btns[i]));
     ASSERT(container);
@@ -68,16 +69,17 @@ void Tracker::updateAboutToggleButton(pp_int32 id, bool b, bool repaint/* = true
   }
 }
 
-void Tracker::updatePlayButtons(pp_int32 id, bool b, bool repaint/* = true*/)
-{
-  pp_int32 btns[3] = { MAINMENU_PLAY_SONG, MAINMENU_PLAY_PATTERN, MAINMENU_PLAY_POSITION };
-  for( int i = 0; i < 3; i++ ){
-    PPButton *btn = static_cast<PPButton*>(screen->getControlByID(btns[i]));
-    btn->setPressed( id == btns[i] && b);	
-    
-    if (repaint)
-      screen->paintControl(btn);
-  }
+void Tracker::updatePlayButtons(pp_int32 id, bool b, bool repaint/* = true*/) {
+	pp_int32 btns[3] = { MAINMENU_PLAY_SONG, MAINMENU_PLAY_PATTERN, MAINMENU_PLAY_POSITION };
+	for( int i = 0; i < 3; i++ ){
+		PPButton *btn = static_cast<PPButton*>(screen->getControlByID(btns[i]));
+		if (btn != NULL){
+			btn->setPressed( id == btns[i] && b);	
+			if (repaint)
+				screen->paintControl(btn);
+
+		}
+	}
 }
 
 bool Tracker::updatePianoControl(PianoControl* pianoControl)
@@ -838,7 +840,8 @@ void Tracker::doFollowSong()
 		const PPColor& pColor = getPatternEditorControl()->gotFocus() ? TrackerConfig::colorRecordModeButtonText : PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText);
 		
 		// we're going to update the record button
-		updateRecordButton(static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU)), pColor);
+		// updateRecordButton(static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU)), pColor);
+		updateRecordButton(static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENUBAR)), pColor);
 		
 #ifdef __LOWRES__
 		// in low-res mode, the record buttons appears 

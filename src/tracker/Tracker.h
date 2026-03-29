@@ -46,6 +46,7 @@ class TabManager;
 class PatternEditorControl;
 class PPListBox;
 class PPStaticText;
+class PPContextMenu;
 class EnvelopeEditorControl;
 class PianoControl;
 class PeakLevelControl;
@@ -134,6 +135,10 @@ private:
 	PeakLevelControl* peakLevelControl;
 	ScopesControl* scopesControl;
 	PPStaticText* playTimeText;
+	PPContextMenu* fileContextMenu;
+	PPContextMenu* editContextMenu;
+	PPContextMenu* viewContextMenu;
+	PPContextMenu* helpContextMenu;
 	
 	// - Sections --------------------------------------------------------------
 	class SectionSwitcher* sectionSwitcher;
@@ -173,6 +178,7 @@ private:
 	bool followSong;
 	bool caughtMouseInUpperLeftCorner;	
 	bool useClassicBrowser;
+	bool isPlaying;
 	
 	// - Keyboard bindings -----------------------------------------------------
 	PPKeyBindings<TTrackerKeyBindingHandler>* eventKeyDownBindings;

@@ -836,7 +836,10 @@ myDisplayDevice = new PPDisplayDeviceFB(windowSize.width, windowSize.height, sca
 #endif
 
 	// Try to create timer
-	timer = SDL_AddTimer(20, timerCallback, NULL);
+	// timer = SDL_AddTimer(20, timerCallback, NULL);
+	// timer = SDL_AddTimer(16, timerCallback, NULL);
+	timer = SDL_AddTimer(8, timerCallback, NULL);
+
 
 	// Start capturing text input events
 	SDL_StartTextInput();
