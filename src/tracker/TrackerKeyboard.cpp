@@ -713,10 +713,10 @@ void Tracker::eventKeyDownBinding_ToggleFT2Edit()
 	PPContainer* container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_MENU));
 	ASSERT(container);
 	
-	PPButton* button = static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT));
-	ASSERT(container);
-	
-	button->setTextColor(recorderLogic->getRecordMode() ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
+	// PPButton* button = static_cast<PPButton*>(container->getControlByID(MAINMENU_EDIT));
+	// ASSERT(container);
+	//
+	// button->setTextColor(recorderLogic->getRecordMode() ? PPUIConfig::getInstance()->getColor(PPUIConfig::ColorDefaultButtonText) : TrackerConfig::colorRecordModeButtonText);
 	
 #ifdef __LOWRES__
 	container = static_cast<PPContainer*>(screen->getControlByID(CONTAINER_LOWRES_TINYMENU));

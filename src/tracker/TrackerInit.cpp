@@ -875,10 +875,12 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 
 #ifndef __LOWRES__
 	pp_int32 bHeight = 12;
-	PPSize size(320, 54/2);
+	// PPSize size(320, 54/2);
+	PPSize size(206, 54-12);
 #else
 	pp_int32 bHeight = 14;
-	PPSize size(320, 64/2);
+	// PPSize size(320, 64/2);
+	PPSize size(206, 64-12);
 #endif
 
 	PPContainer* container = new PPContainer(CONTAINER_MENU, screen, this, PPPoint(x, y), size, false);
@@ -888,37 +890,37 @@ void Tracker::initSectionMainOptions(pp_int32 x, pp_int32 y)
 	y+=2;
 #endif
 	
-	PPButton* button;
-	
-	for (j = 0; j < 4; j++)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			if (j * 4 + i < 15)
-			{
-				button = new PPButton(BUTTON_MENU_ITEM_0 + j*4+i, screen, this, PPPoint(x+4 + i*42, y + 3 + j*bHeight), PPSize((77>>1), bHeight-1));
-				button->setFont( PPFont::getFont(PPFont::FONT_TINY) );
-				button->setText("Unused");
-			
-				container->addControl(button);
-			}
-		}
-		
-	}
-
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("Play Sng");	
-	static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("Play Pat");
-	button = static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP));
-	button->setText("Stop");
-	button->setSize(PPSize(77>>1, bHeight-1));
+	// PPButton* button;
+	//
+	// for (j = 0; j < 4; j++)
+	// {
+	// 	for (i = 0; i < 4; i++)
+	// 	{
+	// 		if (j * 4 + i < 15)
+	// 		{
+	// 			button = new PPButton(BUTTON_MENU_ITEM_0 + j*4+i, screen, this, PPPoint(x+4 + i*42, y + 3 + j*bHeight), PPSize((77>>1), bHeight-1));
+	// 			button->setFont( PPFont::getFont(PPFont::FONT_TINY) );
+	// 			button->setText("Unused");
+	//
+	// 			container->addControl(button);
+	// 		}
+	// 	}
+	//
+	// }
+	//
+	// static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_SONG))->setText("Play Sng");	
+	// static_cast<PPButton*>(container->getControlByID(MAINMENU_PLAY_PATTERN))->setText("Play Pat");
+	// button = static_cast<PPButton*>(container->getControlByID(MAINMENU_STOP));
+	// button->setText("Stop");
+	// button->setSize(PPSize(77>>1, bHeight-1));
 	// Add "Edit" button
-	button = new PPButton(MAINMENU_EDIT, screen, this, 
-						PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
-						PPSize(77>>1, bHeight-1), true, true, false);
-	
-	button->setText("Rec");
-	
-	container->addControl(button);
+	// button = new PPButton(MAINMENU_EDIT, screen, this, 
+	// 					PPPoint(button->getLocation().x + button->getSize().width+1, button->getLocation().y), 
+	// 					PPSize(77>>1, bHeight-1), true, true, false);
+	//
+	// button->setText("Rec");
+	//
+	// container->addControl(button);
 	
 	screen->addControl(container);
 }
