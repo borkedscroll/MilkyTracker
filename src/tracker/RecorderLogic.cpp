@@ -95,7 +95,7 @@ void RecorderLogic::sendNoteDownToPatternEditor(PPEvent* event, pp_int32 note, P
 		// 
 		// Key repeat suppression is enabled when we are looking at a note column (wider suppression than previously done with isLiveRecording)
 
-		// releasePlay = patternEditorControl->getCursorPosInner() == 0;
+		releasePlay = patternEditorControl->getCursorPosInner() == 0;
 
 		if (releasePlay)
 		{
